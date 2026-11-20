@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Laravel Application
+  skuul-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sail-8.5/app:latest
+    container_name: skuul-app
+    ports:
+      - "80:8000"
+    environment:
+      - WWWUSER=1337
+      - WWWGROUP=1000
+      - PHP_IDE_CONFIG=serverName=skuul.local
+      - LARAVEL_SAIL=1
+    volumes:
+      - .:/var/www/html:delegated
+    networks:
+      - skuul
+    depends_on:
+      - skuul-mysql
+      - skuul-redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # MySQL Database
+  skuul-mysql:
+    image: mysql:8.4
+    container_name: skuul-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-skuul}
+      MYSQL_USER: ${DB_USERNAME:-sail}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - skuul-mysql-data:/var/lib/mysql
+    networks:
+      - skuul
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-secret}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Redis (cache, queue, sessions)
+  skuul-redis:
+    image: redis:7-alpine
+    container_name: skuul-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - skuul-redis-data:/data
+    networks:
+      - skuul
+
+  # MailHog (email testing)
+  skuul-mailhog:
+    image: mailhog/mailhog:latest
+    container_name: skuul-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - skuul
+
+networks:
+  skuul:
+    driver: bridge
+
+volumes:
+  skuul-mysql-data:
+    driver: local
+  skuul-redis-data:
+    driver: local

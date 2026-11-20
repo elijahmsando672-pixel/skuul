@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -e
+
+# Fix permissions for the storage and bootstrap/cache directories
+if [ -d /var/www/html/storage ]; then
+    chown -R sail:sail /var/www/html/storage
+fi
+if [ -d /var/www/html/bootstrap/cache ]; then
+    chown -R sail:sail /var/www/html/bootstrap/cache
+fi
+
+# Run migrations if database is available
+if [ ! -z "$DB_HOST" ] && [ ! -z "$DB_DATABASE" ]; then
+    php artisan migrate --force 2>/dev/null || true
+fi
+
+# Start supervisord
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

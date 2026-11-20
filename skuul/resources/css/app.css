@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-gray-50 text-gray-900 font-sans antialiased;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply bg-skuul-600 hover:bg-skuul-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-skuul-500 focus:ring-offset-2;
+    }
+
+    .btn-secondary {
+        @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+    }
+
+    .input-field {
+        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-skuul-500 focus:border-transparent transition-all duration-200;
+    }
+
+    .select-field {
+        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-skuul-500 focus:border-transparent transition-all duration-200 bg-white;
+    }
+
+    .card {
+        @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    }
+
+    .table-header {
+        @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100;
+    }
+
+    .table-cell {
+        @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-100;
+    }
+}
+
+@layer utilities {
+    .status-badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .status-present {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .status-absent {
+        @apply bg-red-100 text-red-800;
+    }
+
+    .status-late {
+        @apply bg-yellow-100 text-yellow-800;
+    }
+
+    .status-excused {
+        @apply bg-blue-100 text-blue-800;
+    }
+}
