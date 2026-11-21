@@ -29,16 +29,23 @@ class RegisterController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
+        $school = \App\Support\Tenancy\TenantContext::school();
+
         $user = User::create([
+            'current_school_id' => $school?->id,
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_type' => 'student',
             'phone' => $request->phone,
             'is_active' => true,
+            'is_platform_admin' => false,
         ]);
 
         $user->assignRole('student');
+        if ($school) {
+            $school->users()->syncWithoutDetaching([$user->id => ['role' => 'student', 'is_active' => true, 'joined_at' => now()]]);
+        }
 
         Auth::login($user);
 
