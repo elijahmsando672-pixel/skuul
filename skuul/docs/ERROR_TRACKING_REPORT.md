@@ -42,8 +42,8 @@ The reported count of approximately 597 problems is not reproducible as 597 dist
 | ERR-022 | `docker/start-container:19` | Migration failures swallowed | `migrate --force || true` hides real failures | High | Open |
 | ERR-023 | `docker-compose.yml:11-17` | App env can fall back to defaults | DB user/password, Redis, and mail env not explicitly injected | Medium | Open |
 | ERR-024 | `Dockerfile`; running container | Possible stale image versus current Dockerfile | Image was built before later Dockerfile edits | Medium | Verify |
-| ERR-025 | `app/Http/Controllers/Auth/RegisterController.php:21-43` | Public registration can choose low-privilege role type | Caller-supplied `role_type` trusted | Critical / Security | Open |
-| ERR-026 | `LoginController.php:32,63`; `Api/AuthController.php:20`; `Api/LoginController` path | Inactive users can log in | `Auth::attempt()` ignores `is_active` | High / Security | Open |
+| ERR-025 | `app/Http/Controllers/Auth/RegisterController.php:21-43` | Public registration can choose low-privilege role type | Caller-supplied `role_type` trusted | Critical / Security | Fixed |
+| ERR-026 | `LoginController.php:32,63`; `Api/AuthController.php:20`; `Api/LoginController` path | Inactive users can log in | `Auth::attempt()` ignores `is_active` | High / Security | Fixed |
 | ERR-027 | `app/Http/Controllers/Api/CatalogController.php:45-87` | Any authenticated user can read all catalog data | `index()`/`show()` lack admin scoping | High / Security | Open |
 | ERR-028 | `AttendanceController.php:29-32`; `GradeController.php:26-29` | Parent can view another student's attendance/grades | Parent-child relationship not verified | High / Security | Open |
 | ERR-029 | `Api/AcademicController.php:127-130` | Student with no enrollment sees all published exams | Empty subject list fails open | Medium / Security | Open |

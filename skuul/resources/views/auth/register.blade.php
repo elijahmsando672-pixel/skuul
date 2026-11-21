@@ -37,15 +37,7 @@
                         <input id="password_confirmation" type="password" name="password_confirmation" required minlength="8" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-skuul-500 focus:border-skuul-500 sm:text-sm">
                     </div>
                 </div>
-                <div class="mt-6 rounded-md shadow-sm">
-                    <span class="block text-sm font-medium leading-6 text-gray-600 dark:text-slate-100">Role</span>
-                    <select id="role_type" name="role_type" class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-skuul-500 focus:border-skuul-500 sm:text-sm">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="parent">Parent</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
+                <p class="mt-6 text-sm text-gray-600 dark:text-slate-300">Accounts are created as students. Contact an administrator for other roles.</p>
                 <div class="flex items-center justify-end mt-6">
                     <button type="submit" class="btn-primary w-full">
                         Create account
