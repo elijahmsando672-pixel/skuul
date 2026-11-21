@@ -1,7 +1,13 @@
 <?php
 
-if (php_sapi_name() !== 'cli-server') {
+$publicPath = __DIR__.'/public';
+
+$uri = urldecode(
+    parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? ''
+);
+
+if ($uri !== '/' && file_exists($publicPath.$uri)) {
     return false;
 }
 
-__DIR__ . '/index.php';
+require_once $publicPath.'/index.php';

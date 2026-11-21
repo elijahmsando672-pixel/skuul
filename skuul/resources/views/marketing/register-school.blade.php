@@ -1,4 +1,4 @@
-﻿<x-guest-layout>
+<x-guest-layout>
     <h2 class="text-2xl font-bold mb-4">Register Your School</h2>
     <form method="POST" action="{{ route('school.register.store') }}" class="space-y-4">
         @csrf

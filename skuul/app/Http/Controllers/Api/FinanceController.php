@@ -73,6 +73,21 @@ class FinanceController extends Controller
         return response()->json($feeRecord->load(['student.user', 'feeStructure']), 201);
     }
 
+    public function showFeeRecord(Request $request, FeeRecord $feeRecord): JsonResponse
+    {
+        $user = $request->user();
+        if (! $this->isAdmin($request)) {
+            if ($user->hasRole('parent')) {
+                abort_unless(in_array($feeRecord->student_id, $this->childIds($user)), 404);
+            } elseif ($user->hasRole('student')) {
+                abort_unless($feeRecord->student_id === ($user->student?->id ?? 0), 404);
+            } else {
+                abort(404);
+            }
+        }
+        return response()->json($feeRecord->load(['student.user','feeStructure']));
+    }
+
     public function updateFeeRecord(Request $request, FeeRecord $feeRecord): JsonResponse
     {
         $this->ensureAdmin($request);

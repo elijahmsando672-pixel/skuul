@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="title">Schools</x-slot>
     <div class="card overflow-x-auto">
         <table class="min-w-full"><thead><tr><th class="table-header">Name</th><th class="table-header">Status</th><th class="table-header">Users</th><th class="table-header">Actions</th></tr></thead>

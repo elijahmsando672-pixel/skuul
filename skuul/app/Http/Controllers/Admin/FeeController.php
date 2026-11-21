@@ -51,6 +51,8 @@ class FeeController extends Controller
 
     public function show(FeeStructure $fee)
     {
+        $schoolId = \App\Support\Tenancy\TenantContext::schoolId();
+        if ($schoolId && (int) $fee->school_id !== (int) $schoolId) abort(404);
         return view('admin.fees.show', compact('fee'));
     }
 

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\Api\MpesaCallbackController;
 use App\Http\Controllers\Platform\DashboardController as PlatformDashboard;

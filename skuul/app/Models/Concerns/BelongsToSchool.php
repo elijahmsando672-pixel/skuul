@@ -13,14 +13,14 @@ trait BelongsToSchool
         static::addGlobalScope('school', function (Builder $builder) {
             $schoolId = TenantContext::schoolId();
             $model = $builder->getModel();
-            if ($schoolId && $model->getTable() !== 'schools' && in_array('school_id', $model->getFillable(), true)) {
+            if ($schoolId && $model->getTable() !== 'schools' && \Illuminate\Support\Facades\Schema::hasColumn($model->getTable(), 'school_id')) {
                 $builder->where($model->getTable().'.school_id', $schoolId);
             }
         });
 
         static::creating(function (Model $model) {
             $schoolId = TenantContext::schoolId();
-            if ($schoolId && empty($model->school_id) && in_array('school_id', $model->getFillable(), true)) {
+            if ($schoolId && empty($model->school_id) && \Illuminate\Support\Facades\Schema::hasColumn($model->getTable(), 'school_id')) {
                 $model->school_id = $schoolId;
             }
         });

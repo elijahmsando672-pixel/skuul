@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Models;
 
@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FeeStructure extends Model
 {
+    use BelongsToSchool;
+
     protected $fillable = [
         'school_id',
         'academic_year_id',

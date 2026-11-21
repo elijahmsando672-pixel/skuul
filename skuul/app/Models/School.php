@@ -13,7 +13,7 @@ class School extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name','slug','registration_number','school_type','country','county','address','contact_email','phone','logo_path','primary_color','secondary_color','status','approved_at','suspended_at','suspension_reason','settings'
+        'name','slug','registration_number','email','phone','address','county','country','logo','status','school_type','contact_email','logo_path','primary_color','secondary_color','approved_at','suspended_at','suspension_reason','settings'
     ];
 
     protected $casts = [

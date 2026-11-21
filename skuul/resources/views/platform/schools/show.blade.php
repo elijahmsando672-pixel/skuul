@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="title">School Details</x-slot>
     <div class="card space-y-2">
         <div><strong>Name:</strong> {{ $school->name }}</div>

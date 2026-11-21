@@ -46,7 +46,16 @@ class StudentController extends Controller
 
     public function show(Student $student)
     {
+        $this->authorizeSchoolRecord($student);
         return view('admin.students.show', compact('student'));
+    }
+
+    private function authorizeSchoolRecord($model): void
+    {
+        $schoolId = \App\Support\Tenancy\TenantContext::schoolId();
+        if ($schoolId && (int) $model->school_id !== (int) $schoolId) {
+            abort(404);
+        }
     }
 
     public function edit(Student $student)

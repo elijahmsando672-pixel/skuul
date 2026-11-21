@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -30,3 +30,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+
+$testBase = dirname(__DIR__).DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'testing';
+$testCache = $testBase.DIRECTORY_SEPARATOR.'cache';
+if (($_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? null) === 'testing' || getenv('APP_ENV') === 'testing') {
+    foreach ([$testBase,$testCache,$testCache.DIRECTORY_SEPARATOR.'views',$testCache.DIRECTORY_SEPARATOR.'data',$testBase.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'sessions',$testBase.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'views',$testBase.DIRECTORY_SEPARATOR.'logs'] as $dir) {
+        if (! is_dir($dir)) { @mkdir($dir, 0777, true); }
+    }
+    $app->addAbsoluteCachePathPrefix($testBase);
+    foreach ([
+        'APP_SERVICES_CACHE' => $testCache.DIRECTORY_SEPARATOR.'services.php',
+        'APP_PACKAGES_CACHE' => $testCache.DIRECTORY_SEPARATOR.'packages.php',
+        'APP_CONFIG_CACHE' => $testCache.DIRECTORY_SEPARATOR.'config.php',
+        'APP_ROUTES_CACHE' => $testCache.DIRECTORY_SEPARATOR.'routes.php',
+        'APP_EVENTS_CACHE' => $testCache.DIRECTORY_SEPARATOR.'events.php',
+    ] as $k => $v) { $_ENV[$k] = $v; $_SERVER[$k] = $v; putenv($k.'='.$v); }
+    $app->useStoragePath($testBase);
+}
+
+return $app;

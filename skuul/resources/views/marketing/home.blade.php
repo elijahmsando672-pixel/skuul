@@ -1,4 +1,4 @@
-﻿<x-guest-layout>
+<x-guest-layout>
     <div class="space-y-8">
         <div class="text-center">
             <h1 class="text-4xl font-bold text-gray-900 dark:text-slate-100">SKUUL School Management SaaS</h1>

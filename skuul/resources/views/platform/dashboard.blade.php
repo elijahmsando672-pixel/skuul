@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="title">Platform Dashboard</x-slot>
     <div class="grid md:grid-cols-4 gap-4 mb-6">
         @foreach([['Total Schools',$stats['total_schools']],['Active',$stats['active_schools']],['Pending',$stats['pending_schools']],['Suspended',$stats['suspended_schools']],['Students',$stats['total_students']],['Teachers',$stats['total_teachers']],['Active Subs',$stats['active_subscriptions']],['MRR (KES)',number_format($stats['mrr'],2)]] as $card)

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Http\Controllers\Api\AcademicController;
 use App\Http\Controllers\Api\AuthController;
@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum','subscription'])->group(function () {
     Route::get('/fee-structures', [FinanceController::class, 'feeStructures']);
     Route::get('/fee-records', [FinanceController::class, 'feeRecords']);
     Route::post('/fee-records', [FinanceController::class, 'storeFeeRecord']);
+    Route::get('/fee-records/{feeRecord}', [FinanceController::class, 'showFeeRecord']);
     Route::put('/fee-records/{feeRecord}', [FinanceController::class, 'updateFeeRecord']);
 
     Route::get('/books', [LibraryController::class, 'books']);

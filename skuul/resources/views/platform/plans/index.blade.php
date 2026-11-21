@@ -1,4 +1,4 @@
-﻿<x-app-layout>
+<x-app-layout>
     <x-slot name="title">Plans</x-slot>
     <div class="card mb-6">
         <form method="POST" action="{{ route('platform.plans.store') }}" class="grid md:grid-cols-4 gap-3">
