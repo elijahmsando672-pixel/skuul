@@ -1,9 +1,10 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -12,12 +13,14 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class BookIssue extends Model
 {
     use HasFactory;
+    use BelongsToSchool;
 
     public const STATUS_ISSUED = 'issued';
 
     public const STATUS_RETURNED = 'returned';
 
     protected $fillable = [
+        'school_id',
         'book_id',
         'borrower_type',
         'borrower_id',
@@ -69,3 +72,4 @@ class BookIssue extends Model
             && $this->due_date->isPast());
     }
 }
+

@@ -1,7 +1,8 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FeeStructure extends Model
 {
     protected $fillable = [
+        'school_id',
         'academic_year_id',
         'name',
         'amount',
@@ -34,3 +36,4 @@ class FeeStructure extends Model
         return $this->hasMany(FeeRecord::class, 'fee_structure_id');
     }
 }
+

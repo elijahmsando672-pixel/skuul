@@ -1,14 +1,16 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FeeRecord extends Model
 {
     protected $fillable = [
+        'school_id',
         'student_id',
         'fee_structure_id',
         'amount',
@@ -46,3 +48,4 @@ class FeeRecord extends Model
         return Attribute::get(fn (): bool => (float) $this->amount_paid >= (float) $this->amount);
     }
 }
+

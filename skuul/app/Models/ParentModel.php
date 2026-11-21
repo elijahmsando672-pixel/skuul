@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class ParentModel extends Model
 {
     use HasFactory;
+    use BelongsToSchool;
 
     protected $table = 'parents';
 
@@ -19,6 +21,7 @@ class ParentModel extends Model
     }
 
     protected $fillable = [
+        'school_id',
         'user_id',
         'parent_id_code',
         'occupation',

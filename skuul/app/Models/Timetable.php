@@ -1,13 +1,15 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Timetable extends Model
 {
     protected $fillable = [
+        'school_id',
         'academic_year_id',
         'classroom_id',
         'subject_id',
@@ -38,3 +40,4 @@ class Timetable extends Model
         return $this->belongsTo(Teacher::class, 'teacher_id');
     }
 }
+

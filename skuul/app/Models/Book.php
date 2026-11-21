@@ -1,16 +1,19 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
     use HasFactory;
+    use BelongsToSchool;
 
     protected $fillable = [
+        'school_id',
         'title',
         'author',
         'isbn',
@@ -39,3 +42,4 @@ class Book extends Model
             ->whereNull('returned_at');
     }
 }
+

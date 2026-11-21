@@ -14,6 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     protected $fillable = [
+        'current_school_id',
         'name',
         'email',
         'password',
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'profile_photo',
         'role_type',
         'is_active',
+        'is_platform_admin',
     ];
 
     protected $hidden = [
@@ -36,6 +38,7 @@ class User extends Authenticatable
         'password' => 'hashed',
         'date_of_birth' => 'date',
         'is_active' => 'boolean',
+        'is_platform_admin' => 'boolean',
     ];
 
     public function student(): HasOne
@@ -51,6 +54,16 @@ class User extends Authenticatable
     public function parent(): HasOne
     {
         return $this->hasOne(ParentModel::class, 'user_id');
+    }
+
+    public function schools()
+    {
+        return $this->belongsToMany(School::class)->withPivot(['role','is_owner','is_active','joined_at'])->withTimestamps();
+    }
+
+    public function currentSchool()
+    {
+        return $this->belongsTo(School::class, 'current_school_id');
     }
 
     public function scopeActive($query)

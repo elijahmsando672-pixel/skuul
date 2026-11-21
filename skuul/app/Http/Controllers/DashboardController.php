@@ -18,6 +18,10 @@ class DashboardController extends Controller
         $user = auth()->user();
         $stats = [];
 
+        if ($user->is_platform_admin) {
+            return redirect()->route('platform.dashboard');
+        }
+
         if ($user->hasRole('admin')) {
             $stats = [
                 'total_students' => Student::count(),

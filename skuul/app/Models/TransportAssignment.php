@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -10,8 +11,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class TransportAssignment extends Model
 {
     use HasFactory;
+    use BelongsToSchool;
 
     protected $fillable = [
+        'school_id',
         'transport_route_id',
         'vehicle_id',
         'assignable_type',
@@ -59,3 +62,4 @@ class TransportAssignment extends Model
         return $query->where('is_active', true);
     }
 }
+

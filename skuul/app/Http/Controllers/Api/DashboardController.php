@@ -25,6 +25,9 @@ class DashboardController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
+        if ($user->is_platform_admin) {
+            return response()->json(['role' => 'platform_admin', 'data' => $this->platformData()]);
+        }
         $role = $this->roleFor($user);
 
         $data = match ($role) {
@@ -34,6 +37,7 @@ class DashboardController extends Controller
             'parent' => $this->parentData($user),
             default => [],
         };
+
 
         return response()->json(['role' => $role, 'data' => $data]);
     }
@@ -129,4 +133,15 @@ class DashboardController extends Controller
                 ->get(),
         ];
     }
+
+    private function platformData(): array
+    {
+        return [
+            'total_schools' => \App\Models\School::count(),
+            'active_schools' => \App\Models\School::where('status','active')->count(),
+            'pending_schools' => \App\Models\School::where('status','pending')->count(),
+            'active_subscriptions' => \App\Models\Subscription::whereIn('status',['active','trial'])->count(),
+        ];
+    }
 }
+
