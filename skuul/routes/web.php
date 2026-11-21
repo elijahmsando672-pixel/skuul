@@ -44,7 +44,7 @@ Route::get('/', function () {
 
 // Authentication
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:6,1');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/teachers', AdminTeacherController::class);
         Route::resource('/classrooms', ClassroomController::class);
         Route::resource('/subjects', SubjectController::class);
-        Route::resource('/academic-years', AcademicYearController::class);
+        Route::resource('/academic-years', AcademicYearController::class)->parameters(['academic-years' => 'year', '/academic-years' => 'year']);
         Route::resource('/timetables', AdminTimetableController::class);
         Route::get('/fees/records', [AdminFeeController::class, 'records'])->name('fees.records');
         Route::post('/fees/records', [AdminFeeController::class, 'recordStore'])->name('fees.records.store');

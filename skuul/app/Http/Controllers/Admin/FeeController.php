@@ -51,10 +51,7 @@ class FeeController extends Controller
 
     public function show(FeeStructure $fee)
     {
-        $feeStructure = $fee;
-        $academicYears = AcademicYear::orderByDesc('start_date')->get();
-
-        return view('admin.fees.edit', compact('feeStructure', 'academicYears'));
+        return view('admin.fees.show', compact('fee'));
     }
 
     public function edit(FeeStructure $fee)

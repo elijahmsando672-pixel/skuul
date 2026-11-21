@@ -25,6 +25,12 @@ class GradeController extends Controller
 
     public function parentIndex(Student $student)
     {
+        $parent = auth()->user()->parent;
+
+        if (! $parent || ! $parent->students()->whereKey($student->getKey())->exists()) {
+            abort(403);
+        }
+
         $grades = Grade::where('student_id', $student->id)->with('subject')->latest()->paginate(15);
         return view('grades.parent-index', compact('student', 'grades'));
     }
@@ -55,7 +61,7 @@ class GradeController extends Controller
 
         Grade::create($validated);
 
-        return redirect()->route('grades.index')->with('success', 'Grade recorded successfully.');
+        return redirect()->route('teacher.grades.index')->with('success', 'Grade recorded successfully.');
     }
 
     public function show(Grade $grade)
@@ -89,7 +95,7 @@ class GradeController extends Controller
 
         $grade->update($validated);
 
-        return redirect()->route('grades.index')->with('success', 'Grade updated successfully.');
+        return redirect()->route('teacher.grades.index')->with('success', 'Grade updated successfully.');
     }
 
     public function destroy(Grade $grade)

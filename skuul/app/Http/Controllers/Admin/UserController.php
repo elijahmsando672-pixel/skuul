@@ -39,7 +39,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'role_type' => $validated['role_type'],
             'phone' => $validated['phone'] ?? null,
-            'is_active' => $validated['is_active'] ?? true,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         $user->assignRole($validated['role_type']);
@@ -73,7 +73,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone' => $validated['phone'] ?? null,
-            'is_active' => $validated['is_active'] ?? true,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         if (!empty($validated['password'])) {

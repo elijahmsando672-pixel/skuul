@@ -3,16 +3,16 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Exams</h1>
-            <p class="text-gray-600">Manage examinations and results</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Exams</h1>
+            <p class="text-gray-600 dark:text-slate-100">Manage examinations and results</p>
         </div>
         <a href="{{ route('admin.exams.create') }}" class="btn-primary">Create Exam</a>
     </div>
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Exam</th>
                         <th class="table-header">Subject</th>
@@ -24,7 +24,7 @@
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($exams as $exam)
                         <tr>
                             <td class="table-cell font-medium">{{ $exam->name }}</td>
@@ -34,7 +34,7 @@
                             <td class="table-cell">{{ $exam->exam_date?->format('M d, Y') }}</td>
                             <td class="table-cell">{{ $exam->total_marks }}</td>
                             <td class="table-cell">
-                                <span class="status-badge {{ $exam->is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">{{ $exam->is_published ? 'Published' : 'Draft' }}</span>
+                                <span class="status-badge {{ $exam->is_published ? 'bg-green-100 text-green-800' : 'bg-gray-100 dark:bg-slate-800/60 text-gray-800 dark:text-slate-100' }}">{{ $exam->is_published ? 'Published' : 'Draft' }}</span>
                             </td>
                             <td class="table-cell">
                                 <div class="flex items-center gap-2">
@@ -54,7 +54,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="table-cell text-center text-gray-500 py-4">No exams found.</td>
+                            <td colspan="8" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No exams found.</td>
                         </tr>
                     @endforelse
                 </tbody>

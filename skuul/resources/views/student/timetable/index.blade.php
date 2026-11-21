@@ -24,7 +24,7 @@
                             <td class="table-cell font-medium">{{ $timetable->day_of_week }}</td>
                             <td class="table-cell">{{ $timetable->start_time }} - {{ $timetable->end_time }}</td>
                             <td class="table-cell">{{ $timetable->subject->name ?? 'N/A' }}</td>
-                            <td class="table-cell">{{ $timetable->teacher?->user->name ?? 'N/A' }}</td>
+                            <td class="table-cell">{{ $timetable->teacher?->user?->name ?? 'N/A' }}</td>
                             <td class="table-cell">{{ $timetable->room ?? '-' }}</td>
                         </tr>
                     @empty

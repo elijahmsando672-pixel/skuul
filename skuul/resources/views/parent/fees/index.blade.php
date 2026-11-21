@@ -2,22 +2,22 @@
     <x-slot name="title">My Fees</x-slot>
 
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">My Fees</h1>
-        <p class="text-gray-600">Fee overview for {{ $children->first()?->user?->name ? 'your children' : 'your account' }}</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">My Fees</h1>
+        <p class="text-gray-600 dark:text-slate-100">Fee overview for {{ $children->first()?->user?->name ? 'your children' : 'your account' }}</p>
     </div>
 
     <div class="card mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Children</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Children</h2>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Student ID</th>
                         <th class="table-header">Name</th>
                         <th class="table-header">Grade Level</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($children as $child)
                         <tr>
                             <td class="table-cell font-medium">{{ $child->student_id }}</td>
@@ -26,7 +26,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="table-cell text-center text-gray-500 py-4">No children found.</td>
+                            <td colspan="3" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No children found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -35,10 +35,10 @@
     </div>
 
     <div class="card">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Fee Records</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Fee Records</h2>
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Student</th>
                         <th class="table-header">Fee Structure</th>
@@ -51,7 +51,7 @@
                         <th class="table-header">Paid At</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($feeRecords as $feeRecord)
                         <tr>
                             <td class="table-cell font-medium">{{ $feeRecord->student?->user?->name ?? 'N/A' }}</td>
@@ -70,7 +70,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="table-cell text-center text-gray-500 py-4">No fee records found.</td>
+                            <td colspan="9" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No fee records found.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -8,10 +8,13 @@ use App\Models\FeeStructure;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class FinanceController extends Controller
 {
+    private const STATUSES = ['pending', 'partial', 'paid', 'overdue'];
+
     public function feeStructures(Request $request): JsonResponse
     {
         $query = FeeStructure::with('academicYear');
@@ -45,24 +48,27 @@ class FinanceController extends Controller
     {
         $this->ensureAdmin($request);
 
-        $validated = $request->validate([
-            'student_id' => [
-                'required',
-                'integer',
-                'exists:students,id',
-                Rule::unique('fee_records')->where(function ($query) use ($request) {
-                    return $query->where('fee_structure_id', $request->input('fee_structure_id'));
-                }),
-            ],
-            'fee_structure_id' => ['required', 'integer', 'exists:fee_structures,id'],
-            'amount' => ['required', 'numeric', 'min:0'],
-            'amount_paid' => ['nullable', 'numeric', 'min:0'],
-            'due_date' => ['required', 'date'],
-            'status' => ['nullable', 'string', 'max:50'],
-            'paid_at' => ['nullable', 'date'],
-        ]);
+        $validated = $this->validateFeeRecord($request);
 
-        $feeRecord = FeeRecord::create($validated);
+        $amount = (float) $validated['amount'];
+        $amountPaid = (float) ($validated['amount_paid'] ?? 0);
+        $status = $validated['status'] ?? 'pending';
+
+        if ($amountPaid >= $amount) {
+            $status = 'paid';
+        } elseif ($amountPaid > 0 && $status === 'pending') {
+            $status = 'partial';
+        }
+
+        $feeRecord = FeeRecord::create([
+            'student_id' => $validated['student_id'],
+            'fee_structure_id' => $validated['fee_structure_id'],
+            'amount' => $amount,
+            'amount_paid' => $amountPaid,
+            'due_date' => $validated['due_date'],
+            'status' => $status,
+            'paid_at' => $status === 'paid' ? now() : null,
+        ]);
 
         return response()->json($feeRecord->load(['student.user', 'feeStructure']), 201);
     }
@@ -71,17 +77,65 @@ class FinanceController extends Controller
     {
         $this->ensureAdmin($request);
 
-        $validated = $request->validate([
-            'amount' => ['sometimes', 'required', 'numeric', 'min:0'],
-            'amount_paid' => ['sometimes', 'required', 'numeric', 'min:0'],
-            'due_date' => ['sometimes', 'required', 'date'],
-            'status' => ['sometimes', 'required', 'string', 'max:50'],
-            'paid_at' => ['sometimes', 'nullable', 'date'],
+        $validated = $this->validateFeeRecord($request, $feeRecord);
+
+        $amount = array_key_exists('amount', $validated) ? (float) $validated['amount'] : (float) $feeRecord->amount;
+        $amountPaid = array_key_exists('amount_paid', $validated) ? (float) $validated['amount_paid'] : (float) $feeRecord->amount_paid;
+        $status = $validated['status'] ?? $feeRecord->status;
+
+        if ($amountPaid >= $amount) {
+            $status = 'paid';
+            $paidAt = now();
+        } elseif ($amountPaid > 0) {
+            $status = 'partial';
+            $paidAt = null;
+        } else {
+            $status = in_array($status, ['pending', 'overdue'], true) ? $status : 'pending';
+            $paidAt = null;
+        }
+
+        $feeRecord->update([
+            'amount' => $amount,
+            'amount_paid' => $amountPaid,
+            'due_date' => $validated['due_date'] ?? $feeRecord->due_date,
+            'status' => $status,
+            'paid_at' => $paidAt,
         ]);
 
-        $feeRecord->update($validated);
-
         return response()->json($feeRecord->load(['student.user', 'feeStructure']));
+    }
+
+    private function validateFeeRecord(Request $request, ?FeeRecord $feeRecord = null): array
+    {
+        $updating = $feeRecord !== null;
+        $rules = [
+            'amount' => [$updating ? 'sometimes|required' : 'required', 'numeric', 'min:0'],
+            'amount_paid' => [$updating ? 'sometimes|nullable' : 'nullable', 'numeric', 'min:0'],
+            'due_date' => [$updating ? 'sometimes|required' : 'required', 'date'],
+            'status' => [$updating ? 'sometimes|required' : 'nullable', Rule::in(self::STATUSES)],
+        ];
+
+        if (! $updating) {
+            $rules['student_id'] = [
+                'required',
+                'integer',
+                'exists:students,id',
+                Rule::unique('fee_records')->where(fn ($query) => $query->where('fee_structure_id', $request->input('fee_structure_id'))),
+            ];
+            $rules['fee_structure_id'] = ['required', 'integer', 'exists:fee_structures,id'];
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+        $validator->after(function ($validator) use ($request, $feeRecord) {
+            $amount = (float) ($request->input('amount', $feeRecord?->amount ?? 0));
+            $amountPaid = (float) ($request->input('amount_paid', $feeRecord?->amount_paid ?? 0));
+
+            if ($amountPaid > $amount) {
+                $validator->errors()->add('amount_paid', 'The amount paid may not be greater than amount.');
+            }
+        });
+
+        return $validator->validate();
     }
 
     private function isAdmin(Request $request): bool

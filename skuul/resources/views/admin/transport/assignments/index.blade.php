@@ -2,12 +2,12 @@
     <x-slot name="title">Transport Assignments</x-slot>
 
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Transport Assignments</h1>
-        <p class="text-gray-600">Assign students and teachers to routes and vehicles</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Transport Assignments</h1>
+        <p class="text-gray-600 dark:text-slate-100">Assign students and teachers to routes and vehicles</p>
     </div>
 
     <div class="card mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Add Assignment</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Add Assignment</h2>
         <form method="POST" action="{{ route('admin.transport.assignments.store') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             @csrf
             <div>
@@ -70,8 +70,8 @@
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Person</th>
                         <th class="table-header">Route</th>
@@ -82,12 +82,12 @@
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($assignments as $assignment)
                         <tr>
                             <td class="table-cell font-medium">
                                 {{ $assignment->assignable?->user?->name ?? 'N/A' }}
-                                <span class="block text-xs text-gray-500">{{ ucfirst($assignment->assignable_type) }}</span>
+                                <span class="block text-xs text-gray-500 dark:text-slate-100">{{ ucfirst($assignment->assignable_type) }}</span>
                             </td>
                             <td class="table-cell">{{ $assignment->transportRoute->name ?? 'N/A' }}</td>
                             <td class="table-cell">{{ $assignment->vehicle->registration_number ?? 'N/A' }}</td>
@@ -106,7 +106,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="table-cell text-center text-gray-500 py-4">No transport assignments found.</td>
+                            <td colspan="7" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No transport assignments found.</td>
                         </tr>
                     @endforelse
                 </tbody>

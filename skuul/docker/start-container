@@ -15,8 +15,22 @@ chown -R sail:sail /var/www/html/bootstrap/cache
 chown -R sail:sail /var/www/html/vendor
 chown -R sail:sail /var/www/html/node_modules
 
-if [ ! -z "$DB_HOST" ] && [ ! -z "$DB_DATABASE" ]; then
-    php artisan migrate --force || true
+if [ -n "$DB_HOST" ] && [ -n "$DB_DATABASE" ]; then
+    max_attempts="${MIGRATION_MAX_ATTEMPTS:-10}"
+    retry_delay="${MIGRATION_RETRY_DELAY:-3}"
+    attempts=0
+
+    until php artisan migrate --force; do
+        attempts=$((attempts + 1))
+
+        if [ "$attempts" -ge "$max_attempts" ]; then
+            echo "Database migrations failed after $attempts attempts." >&2
+            exit 1
+        fi
+
+        echo "Database not ready; retrying migration in ${retry_delay}s (${attempts}/${max_attempts})." >&2
+        sleep "$retry_delay"
+    done
 fi
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

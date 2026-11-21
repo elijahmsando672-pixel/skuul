@@ -3,8 +3,8 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Library</h1>
-            <p class="text-gray-600">Manage books and borrowing records</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Library</h1>
+            <p class="text-gray-600 dark:text-slate-100">Manage books and borrowing records</p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('admin.library.issues') }}" class="btn-secondary">Issued Books</a>
@@ -14,29 +14,29 @@
 
     @isset($book)
         <div class="card mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ $book->title }}</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-3">{{ $book->title }}</h2>
             <dl class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                 <div>
-                    <dt class="text-gray-500">Author</dt>
+                    <dt class="text-gray-500 dark:text-slate-100">Author</dt>
                     <dd class="font-medium">{{ $book->author }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gray-500">ISBN</dt>
+                    <dt class="text-gray-500 dark:text-slate-100">ISBN</dt>
                     <dd class="font-medium">{{ $book->isbn ?? 'N/A' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gray-500">Shelf</dt>
+                    <dt class="text-gray-500 dark:text-slate-100">Shelf</dt>
                     <dd class="font-medium">{{ $book->shelf_location ?? 'N/A' }}</dd>
                 </div>
             </dl>
             @forelse($book->issues as $issue)
                 @if ($loop->first)
-                    <h3 class="text-md font-semibold text-gray-900 mt-4 mb-2">Borrowing history</h3>
+                    <h3 class="text-md font-semibold text-gray-900 dark:text-slate-100 mt-4 mb-2">Borrowing history</h3>
                     <ul class="space-y-1 text-sm">
                 @endif
                 <li>
-                    {{ $issue->borrower?->user->name ?? 'Unknown borrower' }}
-                    <span class="status-badge {{ $issue->is_overdue ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' }}">
+                    {{ $issue->borrower?->user?->name ?? 'Unknown borrower' }}
+                    <span class="status-badge {{ $issue->is_overdue ? 'bg-red-100 text-red-800' : 'bg-gray-100 dark:bg-slate-800/60 text-gray-800 dark:text-slate-100' }}">
                         {{ $issue->is_overdue ? 'Overdue' : ucfirst($issue->status) }}
                     </span>
                 </li>
@@ -44,7 +44,7 @@
                     </ul>
                 @endif
             @empty
-                <p class="text-sm text-gray-500 mt-4">No borrowing history for this book.</p>
+                <p class="text-sm text-gray-500 dark:text-slate-100 mt-4">No borrowing history for this book.</p>
             @endforelse
         </div>
     @endisset
@@ -59,8 +59,8 @@
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Title</th>
                         <th class="table-header">Author</th>
@@ -71,7 +71,7 @@
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($books as $item)
                         <tr>
                             <td class="table-cell font-medium">{{ $item->title }}</td>
@@ -86,7 +86,7 @@
                             </td>
                             <td class="table-cell">
                                 <a href="{{ route('admin.library.show', $item) }}" class="text-skuul-600 hover:text-skuul-500">View</a>
-                                <a href="{{ route('admin.library.edit', $item) }}" class="ml-2 text-gray-500 hover:text-gray-700">Edit</a>
+                                <a href="{{ route('admin.library.edit', $item) }}" class="ml-2 text-gray-500 dark:text-slate-100 hover:text-gray-700">Edit</a>
                                 <form method="POST" action="{{ route('admin.library.destroy', $item) }}" class="inline">
                                     @csrf
                                     @method('DELETE')
@@ -96,7 +96,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="table-cell text-center text-gray-500 py-4">No books found.</td>
+                            <td colspan="7" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No books found.</td>
                         </tr>
                     @endforelse
                 </tbody>

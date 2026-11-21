@@ -29,7 +29,7 @@ class LoginController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        if (Auth::attempt(array_merge($request->only('email', 'password'), ['is_active' => true]), $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             if ($request->expectsJson()) {
@@ -60,7 +60,7 @@ class LoginController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt(array_merge($request->only('email', 'password'), ['is_active' => true]))) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 

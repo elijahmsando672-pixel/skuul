@@ -3,7 +3,7 @@
 
     <div class="max-w-2xl mx-auto">
         <div class="card mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Edit Exam</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Edit Exam</h2>
             <form method="POST" action="{{ route('admin.exams.update', $exam) }}" class="space-y-4">
                 @csrf
                 @method('PUT')

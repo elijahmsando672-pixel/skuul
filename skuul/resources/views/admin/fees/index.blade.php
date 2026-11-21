@@ -3,8 +3,8 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Fee Structures</h1>
-            <p class="text-gray-600">Manage fee structures and student fee records</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Fee Structures</h1>
+            <p class="text-gray-600 dark:text-slate-100">Manage fee structures and student fee records</p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('admin.fees.records') }}" class="btn-secondary">View Records</a>
@@ -14,8 +14,8 @@
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Name</th>
                         <th class="table-header">Academic Year</th>
@@ -27,7 +27,7 @@
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($feeStructures as $feeStructure)
                         <tr>
                             <td class="table-cell font-medium">{{ $feeStructure->name }}</td>
@@ -36,7 +36,7 @@
                             <td class="table-cell">{{ ucfirst($feeStructure->frequency) }}</td>
                             <td class="table-cell">{{ $feeStructure->due_date?->format('M d, Y') ?? 'N/A' }}</td>
                             <td class="table-cell">
-                                <span class="status-badge {{ $feeStructure->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                <span class="status-badge {{ $feeStructure->is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 dark:bg-slate-800/60 text-gray-800 dark:text-slate-100' }}">
                                     {{ $feeStructure->is_active ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
@@ -52,7 +52,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="table-cell text-center text-gray-500 py-4">No fee structures found.</td>
+                            <td colspan="8" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No fee structures found.</td>
                         </tr>
                     @endforelse
                 </tbody>

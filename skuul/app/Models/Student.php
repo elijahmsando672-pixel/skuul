@@ -53,6 +53,6 @@ class Student extends Model
     public function currentEnrollment()
     {
         return $this->hasOne(Enrollment::class, 'student_id')
-            ->where('academic_year_id', auth()->user() ? auth()->user()->currentAcademicYearId : null);
+            ->whereHas('academicYear', fn ($query) => $query->where('is_active', true));
     }
 }

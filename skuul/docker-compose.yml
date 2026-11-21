@@ -8,13 +8,22 @@ services:
     container_name: skuul-app
     ports:
       - "80:8000"
+    env_file:
+      - .env
     environment:
       - WWWUSER=1337
       - WWWGROUP=1000
       - PHP_IDE_CONFIG=serverName=skuul.local
       - LARAVEL_SAIL=1
       - DB_HOST=skuul-mysql
+      - DB_PORT=3306
       - DB_DATABASE=${DB_DATABASE:-skuul}
+      - DB_USERNAME=${DB_USERNAME:-sail}
+      - REDIS_HOST=skuul-redis
+      - REDIS_PORT=6379
+      - MAIL_MAILER=${MAIL_MAILER:-smtp}
+      - MAIL_HOST=skuul-mailhog
+      - MAIL_PORT=1025
     volumes:
       - .:/var/www/html:delegated
       - skuul-vendor:/var/www/html/vendor
@@ -22,8 +31,10 @@ services:
     networks:
       - skuul
     depends_on:
-      - skuul-mysql
-      - skuul-redis
+      skuul-mysql:
+        condition: service_healthy
+      skuul-redis:
+        condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -34,16 +45,16 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
       MYSQL_DATABASE: ${DB_DATABASE:-skuul}
       MYSQL_USER: ${DB_USERNAME:-sail}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
     volumes:
       - skuul-mysql-data:/var/lib/mysql
     networks:
       - skuul
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-secret}"]
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_ROOT_PASSWORD\" mysqladmin ping --silent --host=127.0.0.1 --user=root"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -58,6 +69,11 @@ services:
       - skuul-redis-data:/data
     networks:
       - skuul
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # MailHog (email testing)
   skuul-mailhog:
@@ -68,6 +84,11 @@ services:
       - "8025:8025"
     networks:
       - skuul
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8025/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   skuul:

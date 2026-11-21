@@ -3,16 +3,16 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Transport Routes</h1>
-            <p class="text-gray-600">Manage bus routes, pickup points, and travel times</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Transport Routes</h1>
+            <p class="text-gray-600 dark:text-slate-100">Manage bus routes, pickup points, and travel times</p>
         </div>
         <a href="{{ route('admin.transport.routes.create') }}" class="btn-primary">Add Route</a>
     </div>
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Name</th>
                         <th class="table-header">Origin</th>
@@ -23,7 +23,7 @@
                         <th class="table-header">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($routes as $route)
                         <tr>
                             <td class="table-cell font-medium">{{ $route->name }}</td>
@@ -45,7 +45,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="table-cell text-center text-gray-500 py-4">No transport routes found.</td>
+                            <td colspan="7" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No transport routes found.</td>
                         </tr>
                     @endforelse
                 </tbody>

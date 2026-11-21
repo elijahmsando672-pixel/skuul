@@ -22,7 +22,6 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_type' => 'required|in:student,parent',
             'phone' => 'nullable|string|max:20',
         ]);
 
@@ -34,13 +33,12 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_type' => $request->role_type,
+            'role_type' => 'student',
             'phone' => $request->phone,
             'is_active' => true,
         ]);
 
-        // Assign default role based on role_type
-        $user->assignRole($request->role_type);
+        $user->assignRole('student');
 
         Auth::login($user);
 

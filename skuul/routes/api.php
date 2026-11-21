@@ -11,8 +11,8 @@ use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [LoginController::class, 'apiLogin']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/login', [LoginController::class, 'apiLogin'])->middleware('throttle:6,1');
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', fn (Request $request) => $request->user());

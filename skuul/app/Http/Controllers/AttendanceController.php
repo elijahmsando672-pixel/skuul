@@ -16,7 +16,8 @@ class AttendanceController extends Controller
     {
         $teacher = auth()->user()->teacher;
         $subjects = $teacher ? $teacher->subjects()->with('classroom')->get() : collect();
-        return view('attendance.teacher-index', compact('teacher', 'subjects'));
+        $classrooms = $subjects->pluck('classroom')->filter()->unique('id')->values();
+        return view('attendance.teacher-index', compact('teacher', 'subjects', 'classrooms'));
     }
 
     public function studentIndex()
@@ -28,6 +29,12 @@ class AttendanceController extends Controller
 
     public function parentIndex(Student $student)
     {
+        $parent = auth()->user()->parent;
+
+        if (! $parent || ! $parent->students()->whereKey($student->getKey())->exists()) {
+            abort(403);
+        }
+
         $attendance = Attendance::where('student_id', $student->id)->latest()->paginate(15);
         return view('attendance.parent-index', compact('student', 'attendance'));
     }
@@ -35,13 +42,13 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'classroom_id' => 'required|exists:classrooms,id',
-            'subject_id' => 'required|exists:subjects,id',
-            'date' => 'required|date',
-            'records' => 'required|array',
-            'records.*.student_id' => 'required|exists:students,id',
-            'records.*.status' => 'required|in:present,absent,late,excused',
-            'records.*.notes' => 'nullable|string',
+            'classroom_id' => ['required', 'integer', 'exists:classrooms,id'],
+            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'date' => ['required', 'date', 'before_or_equal:today'],
+            'records' => ['required', 'array', 'min:1'],
+            'records.*.student_id' => ['required', 'integer', 'exists:students,id'],
+            'records.*.status' => ['required', 'in:present,absent,late,excused'],
+            'records.*.notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $teacher = auth()->user()->teacher;

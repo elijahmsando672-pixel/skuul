@@ -10,46 +10,86 @@ if (csrfToken) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const sidebar = document.getElementById('sidebar');
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebars = Array.from(document.querySelectorAll('[id="sidebar"]'));
+    const toggles = Array.from(document.querySelectorAll('[id="sidebar-toggle"]'));
+    const closeButtons = Array.from(document.querySelectorAll('[id="sidebar-close"]'));
+    const overlays = Array.from(document.querySelectorAll('[id="sidebar-overlay"]'));
 
-    function closeSidebar() {
-        if (!sidebar) return;
-        sidebar.classList.add('-translate-x-full');
-        if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
+    function isOpen(sidebar) {
+        return !sidebar.classList.contains('hidden') && !sidebar.classList.contains('-translate-x-full');
     }
 
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', function () {
-            sidebar.classList.toggle('-translate-x-full');
-            if (sidebarOverlay) sidebarOverlay.classList.toggle('hidden');
+    function openSidebar(sidebar) {
+        sidebar.classList.remove('hidden', '-translate-x-full');
+        overlays.forEach(function (overlay) {
+            overlay.classList.remove('hidden');
         });
     }
 
-    const sidebarClose = document.getElementById('sidebar-close');
+    function closeSidebar(sidebar) {
+        if (sidebar.classList.contains('lg:flex')) {
+            sidebar.classList.add('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+        }
 
-    if (sidebarClose) {
-        sidebarClose.addEventListener('click', closeSidebar);
+        if (!sidebars.some(isOpen)) {
+            overlays.forEach(function (overlay) {
+                overlay.classList.add('hidden');
+            });
+        }
     }
 
-    if (sidebarOverlay) {
-        sidebarOverlay.addEventListener('click', closeSidebar);
+    function targetsFor(element, candidates) {
+        const index = candidates.indexOf(element);
+        return candidates.length === sidebars.length && index !== -1 ? [sidebars[index]] : sidebars;
     }
 
-    const themeToggle = document.getElementById('theme-toggle');
+    toggles.forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+            targetsFor(toggle, toggles).forEach(function (sidebar) {
+                if (isOpen(sidebar)) {
+                    closeSidebar(sidebar);
+                } else {
+                    openSidebar(sidebar);
+                }
+            });
+        });
+    });
 
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function () {
+    closeButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            targetsFor(button, closeButtons).forEach(closeSidebar);
+        });
+    });
+
+    overlays.forEach(function (overlay) {
+        overlay.addEventListener('click', function () {
+            targetsFor(overlay, overlays).forEach(closeSidebar);
+        });
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' || event.key === 'Esc') {
+            sidebars.forEach(closeSidebar);
+        }
+    });
+
+    document.querySelectorAll('[id="theme-toggle"]').forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
-    }
+    });
 
     document.querySelectorAll('[data-confirm]').forEach(function (element) {
-        element.addEventListener('submit', function (event) {
-            const message = element.getAttribute('data-confirm') || 'Are you sure?';
-            if (!window.confirm(message)) event.preventDefault();
+        const message = element.getAttribute('data-confirm') || 'Are you sure?';
+        const eventName = element.tagName === 'FORM' ? 'submit' : 'click';
+
+        element.addEventListener(eventName, function (event) {
+            if (!window.confirm(message)) {
+                event.preventDefault();
+            }
         });
     });
 

@@ -127,7 +127,7 @@ class AcademicController extends Controller
                 $query->where('is_published', true);
                 $classroomIds = $this->classroomIds($user->student);
                 $subjectIds = $classroomIds ? Subject::whereIn('classroom_id', $classroomIds)->pluck('id')->all() : [];
-                $query->when($subjectIds, fn (Builder $q) => $q->whereIn('subject_id', $subjectIds));
+                $query->whereIn('subject_id', $subjectIds ?: [0]);
                 $studentId = $user->student?->id ?? 0;
                 $resultScope = fn ($q) => $q->where('student_id', $studentId);
                 break;

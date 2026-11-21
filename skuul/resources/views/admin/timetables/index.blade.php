@@ -30,7 +30,7 @@
                             <td class="table-cell">{{ $timetable->start_time }} - {{ $timetable->end_time }}</td>
                             <td class="table-cell">{{ $timetable->classroom->name ?? 'N/A' }}</td>
                             <td class="table-cell">{{ $timetable->subject->name ?? 'N/A' }}</td>
-                            <td class="table-cell">{{ $timetable->teacher?->user->name ?? 'N/A' }}</td>
+                            <td class="table-cell">{{ $timetable->teacher?->user?->name ?? 'N/A' }}</td>
                             <td class="table-cell">{{ $timetable->room ?? '-' }}</td>
                             <td class="table-cell">
                                 <div class="flex items-center gap-3">

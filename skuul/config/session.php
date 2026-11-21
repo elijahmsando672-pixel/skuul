@@ -10,13 +10,13 @@ return [
 
     'encrypt' => env('SESSION_ENCRYPT', false),
 
-    'path' => '/',
+    'path' => env('SESSION_PATH', '/'),
 
     'domain' => env('SESSION_DOMAIN', null),
 
     'secure' => env('SESSION_SECURE_COOKIE', null),
 
-    'samesite' => 'lax',
+    'samesite' => env('SESSION_SAME_SITE', 'lax'),
 
     'partitioned' => false,
 

@@ -3,14 +3,14 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Fee Records</h1>
-            <p class="text-gray-600">Manage student fee records and payments</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-slate-100">Fee Records</h1>
+            <p class="text-gray-600 dark:text-slate-100">Manage student fee records and payments</p>
         </div>
         <a href="{{ route('admin.fees.index') }}" class="btn-secondary">Fee Structures</a>
     </div>
 
     <div class="card mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Create Fee Record</h2>
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-slate-100 mb-4">Create Fee Record</h2>
         <form method="POST" action="{{ route('admin.fees.records.store') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @csrf
             <div>
@@ -80,8 +80,8 @@
 
     <div class="card">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-100">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-800">
+                <thead class="bg-gray-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="table-header">Student</th>
                         <th class="table-header">Fee Structure</th>
@@ -91,16 +91,16 @@
                         <th class="table-header">Due Date</th>
                         <th class="table-header">Status</th>
                         <th class="table-header">Paid At</th>
-                        <th class="table-header">Mark Payment</th>
+                        <th class="table-header">Total Paid to Date</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
+                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-100 dark:divide-slate-800">
                     @forelse($feeRecords as $feeRecord)
                         <tr>
                             <td class="table-cell font-medium">{{ $feeRecord->student?->user?->name ?? 'N/A' }}</td>
                             <td class="table-cell">
                                 {{ $feeRecord->feeStructure?->name ?? 'N/A' }}
-                                <span class="block text-xs text-gray-500">{{ $feeRecord->feeStructure?->academicYear?->name ?? '' }}</span>
+                                <span class="block text-xs text-gray-500 dark:text-slate-100">{{ $feeRecord->feeStructure?->academicYear?->name ?? '' }}</span>
                             </td>
                             <td class="table-cell">{{ number_format((float) $feeRecord->amount, 2) }}</td>
                             <td class="table-cell">{{ number_format((float) $feeRecord->amount_paid, 2) }}</td>
@@ -115,7 +115,7 @@
                             <td class="table-cell">
                                 <form method="POST" action="{{ route('admin.fees.records.status', $feeRecord) }}" class="flex items-center gap-2">
                                     @csrf
-                                    <input type="number" name="amount_paid" class="input-field w-28" value="{{ $feeRecord->balance }}" step="0.01" min="0" max="{{ $feeRecord->amount }}" required aria-label="Amount paid">
+                                    <input type="number" name="amount_paid" class="input-field w-28" value="{{ $feeRecord->amount_paid }}" step="0.01" min="0" max="{{ $feeRecord->amount }}" required aria-label="Total paid to date" placeholder="Total paid to date" title="Total paid to date">
                                     <select name="status" class="input-field w-28" required aria-label="Status">
                                         <option value="pending" @selected($feeRecord->status === 'pending')>Pending</option>
                                         <option value="partial" @selected($feeRecord->status === 'partial')>Partial</option>
@@ -128,7 +128,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="table-cell text-center text-gray-500 py-4">No fee records found.</td>
+                            <td colspan="9" class="table-cell text-center text-gray-500 dark:text-slate-100 py-4">No fee records found.</td>
                         </tr>
                     @endforelse
                 </tbody>

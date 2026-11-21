@@ -95,10 +95,13 @@ class TimetableController extends Controller
     public function student()
     {
         $student = auth()->user()->student;
+        $classroomIds = $student
+            ? $student->enrollments()->pluck('classroom_id')->filter()->unique()->values()->all()
+            : [];
 
-        $timetables = $student
-            ? Timetable::with('subject', 'teacher.user')
-                ->where('classroom_id', $student->classroom_id)
+        $timetables = $classroomIds !== []
+            ? Timetable::with('classroom', 'subject', 'teacher.user')
+                ->whereIn('classroom_id', $classroomIds)
                 ->get()
                 ->sortBy(function ($timetable) {
                     return [array_search($timetable->day_of_week, self::DAYS), $timetable->start_time];

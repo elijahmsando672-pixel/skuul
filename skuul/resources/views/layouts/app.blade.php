@@ -83,7 +83,7 @@
                         @if(auth()->user()->hasRole('parent'))
                             <a href="{{ route('parent.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">My Dashboard</a>
                         @endif
-                    @endif
+                    @endauth
                 </nav>
             </div>
         </aside>
