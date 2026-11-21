@@ -33,17 +33,17 @@ class AcademicYearController extends Controller
         return redirect()->route('admin.academic-years.index')->with('success', 'Academic year created successfully.');
     }
 
-    public function show(AcademicYear $year)
+    public function show(AcademicYear $academicYear)
     {
-        return view('admin.academic-years.show', compact('year'));
+        return view('admin.academic-years.show', ['year' => $academicYear]);
     }
 
-    public function edit(AcademicYear $year)
+    public function edit(AcademicYear $academicYear)
     {
-        return view('admin.academic-years.edit', compact('year'));
+        return view('admin.academic-years.edit', ['year' => $academicYear]);
     }
 
-    public function update(Request $request, AcademicYear $year)
+    public function update(Request $request, AcademicYear $academicYear)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -52,14 +52,14 @@ class AcademicYearController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $year->update($validated);
+        $academicYear->update($validated);
 
         return redirect()->route('admin.academic-years.index')->with('success', 'Academic year updated successfully.');
     }
 
-    public function destroy(AcademicYear $year)
+    public function destroy(AcademicYear $academicYear)
     {
-        $year->delete();
+        $academicYear->delete();
         return redirect()->route('admin.academic-years.index')->with('success', 'Academic year deleted successfully.');
     }
 }

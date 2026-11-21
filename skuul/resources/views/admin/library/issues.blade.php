@@ -35,10 +35,10 @@
                 <select id="borrower_id" name="borrower_id" class="select-field" required>
                     <option value="">Select borrower</option>
                     @foreach($students as $student)
-                        <option value="{{ $student->id }}" data-type="student" @selected(old('borrower_id') == $student->id)>{{ $student->user?->name ?? 'N/A' }} (Student)</option>
+                        <option value="{{ $student->id }}" data-type="student" @selected(old('borrower_type', 'student') === 'student' && old('borrower_id') == $student->id)>{{ $student->user?->name ?? 'N/A' }} (Student)</option>
                     @endforeach
                     @foreach($teachers as $teacher)
-                        <option value="{{ $teacher->id }}" data-type="teacher" @selected(old('borrower_id') == $teacher->id)>{{ $teacher->user?->name ?? 'N/A' }} (Teacher)</option>
+                        <option value="{{ $teacher->id }}" data-type="teacher" @selected(old('borrower_type') === 'teacher' && old('borrower_id') == $teacher->id)>{{ $teacher->user?->name ?? 'N/A' }} (Teacher)</option>
                     @endforeach
                 </select>
             </div>
