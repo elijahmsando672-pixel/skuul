@@ -9,6 +9,8 @@ class EnrollmentSeeder extends Seeder
 {
     public function run(): void
     {
-        Enrollment::factory()->count(40)->create();
+        if (Enrollment::query()->count() === 0) {
+            Enrollment::factory()->count(40)->create();
+        }
     }
 }

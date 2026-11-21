@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -70,7 +71,21 @@ class LoginController extends Controller
 
     public function apiLogout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $bearerToken = $request->bearerToken();
+
+        if ($bearerToken) {
+            $token = PersonalAccessToken::findToken($bearerToken);
+
+            if ($token && $token->tokenable_id === $request->user()->id && $token->tokenable_type === $request->user()->getMorphClass()) {
+                $token->delete();
+            }
+        }
+
+        $currentToken = $request->user()?->currentAccessToken();
+
+        if ($currentToken instanceof PersonalAccessToken) {
+            $currentToken->delete();
+        }
 
         return response()->json(['message' => 'Logged out']);
     }
@@ -91,8 +106,13 @@ class LoginController extends Controller
 
     public function sendResetPasswordEmail(Request $request)
     {
-        // Simplified - in production use Laravel's Password broker
-        return back()->with('status', 'Reset link sent!');
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
     }
 
     public function showResetPasswordForm($token)
@@ -108,6 +128,17 @@ class LoginController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        return back()->with('status', 'Password reset successfully!');
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill(['password' => Hash::make($password)])->save();
+                $user->setRememberToken(\Illuminate\Support\Str::random(60));
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
     }
 }

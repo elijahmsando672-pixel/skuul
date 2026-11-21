@@ -16,10 +16,10 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'student_id' => Student::factory(),
-            'classroom_id' => Classroom::factory(),
-            'subject_id' => Subject::factory(),
-            'teacher_id' => Teacher::factory(),
+            'student_id' => Student::inRandomOrder()->first() ?? Student::factory(),
+            'classroom_id' => Classroom::inRandomOrder()->first() ?? Classroom::factory(),
+            'subject_id' => Subject::inRandomOrder()->first() ?? Subject::factory(),
+            'teacher_id' => Teacher::inRandomOrder()->first() ?? Teacher::factory(),
             'date' => fake()->dateTimeBetween('-1 month', 'now')->format('Y-m-d'),
             'status' => fake()->randomElement(['present', 'absent', 'late', 'excused']),
             'notes' => fake()->optional()->sentence(),

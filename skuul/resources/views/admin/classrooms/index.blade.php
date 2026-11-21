@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($classrooms as $classroom)
+                    @forelse($classrooms as $classroom)
                         <tr>
                             <td class="table-cell font-medium">{{ $classroom->name }}</td>
                             <td class="table-cell">{{ $classroom->grade_level }}</td>
@@ -39,7 +39,7 @@
                         <tr>
                             <td colspan="6" class="table-cell text-center text-gray-500 py-4">No classrooms found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

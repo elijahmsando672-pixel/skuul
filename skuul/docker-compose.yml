@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Laravel Application
   skuul-app:
@@ -15,8 +13,12 @@ services:
       - WWWGROUP=1000
       - PHP_IDE_CONFIG=serverName=skuul.local
       - LARAVEL_SAIL=1
+      - DB_HOST=skuul-mysql
+      - DB_DATABASE=${DB_DATABASE:-skuul}
     volumes:
       - .:/var/www/html:delegated
+      - skuul-vendor:/var/www/html/vendor
+      - skuul-node-modules:/var/www/html/node_modules
     networks:
       - skuul
     depends_on:
@@ -75,4 +77,8 @@ volumes:
   skuul-mysql-data:
     driver: local
   skuul-redis-data:
+    driver: local
+  skuul-vendor:
+    driver: local
+  skuul-node-modules:
     driver: local

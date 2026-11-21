@@ -25,7 +25,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($years as $year)
+                    @forelse($years as $year)
                         <tr>
                             <td class="table-cell">{{ $year->name }}</td>
                             <td class="table-cell">{{ $year->start_date->format('M d, Y') }}</td>
@@ -40,7 +40,7 @@
                         <tr>
                             <td colspan="5" class="table-cell text-center text-gray-500 py-4">No academic years found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

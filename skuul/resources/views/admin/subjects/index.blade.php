@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($subjects as $subject)
+                    @forelse($subjects as $subject)
                         <tr>
                             <td class="table-cell font-medium">{{ $subject->code }}</td>
                             <td class="table-cell">{{ $subject->name }}</td>
@@ -39,7 +39,7 @@
                         <tr>
                             <td colspan="6" class="table-cell text-center text-gray-500 py-4">No subjects found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -9,36 +9,25 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create admin user
-        $admin = User::factory()->admin()->create([
-            'name' => 'System Administrator',
-            'email' => 'admin@skuul.local',
-            'password' => bcrypt('password'),
-        ]);
-        $admin->assignRole('admin');
+        $accounts = [
+            ['name' => 'System Administrator', 'email' => 'admin@skuul.local', 'role' => 'admin'],
+            ['name' => 'John Teacher', 'email' => 'teacher@skuul.local', 'role' => 'teacher'],
+            ['name' => 'Jane Student', 'email' => 'student@skuul.local', 'role' => 'student'],
+            ['name' => 'Bob Parent', 'email' => 'parent@skuul.local', 'role' => 'parent'],
+        ];
 
-        // Create teacher user
-        $teacher = User::factory()->teacher()->create([
-            'name' => 'John Teacher',
-            'email' => 'teacher@skuul.local',
-            'password' => bcrypt('password'),
-        ]);
-        $teacher->assignRole('teacher');
+        foreach ($accounts as $account) {
+            $user = User::updateOrCreate(
+                ['email' => $account['email']],
+                [
+                    'name' => $account['name'],
+                    'password' => bcrypt('password'),
+                    'role_type' => $account['role'],
+                    'is_active' => true,
+                ]
+            );
 
-        // Create student user
-        $student = User::factory()->student()->create([
-            'name' => 'Jane Student',
-            'email' => 'student@skuul.local',
-            'password' => bcrypt('password'),
-        ]);
-        $student->assignRole('student');
-
-        // Create parent user
-        $parent = User::factory()->parent()->create([
-            'name' => 'Bob Parent',
-            'email' => 'parent@skuul.local',
-            'password' => bcrypt('password'),
-        ]);
-        $parent->assignRole('parent');
+            $user->syncRoles([$account['role']]);
+        }
     }
 }

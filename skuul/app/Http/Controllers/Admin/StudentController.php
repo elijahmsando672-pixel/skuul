@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AcademicYear;
 use App\Models\Classroom;
 use App\Models\Enrollment;
 use App\Models\ParentModel;
 use App\Models\Student;
 use App\Models\User;
+use App\Notifications\EnrollmentConfirmation;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -92,6 +94,13 @@ class StudentController extends Controller
             'enrollment_date' => $validated['enrollment_date'],
             'status' => 'active',
         ]);
+
+        $student->load('user');
+        $student->user?->notify(new EnrollmentConfirmation(
+            $student,
+            Classroom::findOrFail($validated['classroom_id']),
+            AcademicYear::findOrFail($validated['academic_year_id']),
+        ));
 
         return back()->with('success', 'Student enrolled successfully.');
     }

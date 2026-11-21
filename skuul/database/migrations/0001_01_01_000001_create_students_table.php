@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('student_id')->unique();
             $table->string('grade_level')->nullable();
             $table->date('enrollment_date')->nullable();
-            $table->foreignId('parent_id')->nullable()->constrained('parents')->onDelete('set null');
+            $table->foreignId('parent_id')->nullable();
             $table->string('emergency_contact')->nullable();
             $table->text('medical_info')->nullable();
             $table->timestamps();

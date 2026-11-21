@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-# Fix permissions for the storage and bootstrap/cache directories
-if [ -d /var/www/html/storage ]; then
-    chown -R sail:sail /var/www/html/storage
-fi
-if [ -d /var/www/html/bootstrap/cache ]; then
-    chown -R sail:sail /var/www/html/bootstrap/cache
-fi
+mkdir -p /var/www/html/bootstrap/cache
+mkdir -p /var/www/html/storage/framework/cache/data
+mkdir -p /var/www/html/storage/framework/sessions
+mkdir -p /var/www/html/storage/framework/views
+mkdir -p /var/www/html/storage/framework/testing
+mkdir -p /var/www/html/storage/logs
+mkdir -p /var/www/html/vendor
+mkdir -p /var/www/html/node_modules
 
-# Run migrations if database is available
+chown -R sail:sail /var/www/html/storage
+chown -R sail:sail /var/www/html/bootstrap/cache
+chown -R sail:sail /var/www/html/vendor
+chown -R sail:sail /var/www/html/node_modules
+
 if [ ! -z "$DB_HOST" ] && [ ! -z "$DB_DATABASE" ]; then
-    php artisan migrate --force 2>/dev/null || true
+    php artisan migrate --force || true
 fi
 
-# Start supervisord
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

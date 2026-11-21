@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($students as $student)
+                    @forelse($students as $student)
                         <tr>
                             <td class="table-cell font-medium">{{ $student->student_id }}</td>
                             <td class="table-cell">{{ $student->user->name }}</td>
@@ -36,13 +36,19 @@
                             <td class="table-cell">
                                 <a href="{{ route('admin.students.show', $student) }}" class="text-skuul-600 hover:text-skuul-500">View</a>
                                 <a href="{{ route('admin.students.edit', $student) }}" class="ml-2 text-gray-500 hover:text-gray-700">Edit</a>
+                                @if ($student->user && $student->user->is_active && $student->user->hasRole('student'))
+                                    <form method="POST" action="{{ route('admin.impersonate', $student->user_id) }}" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="ml-2 text-skuul-600 hover:text-skuul-500">Login as</button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="6" class="table-cell text-center text-gray-500 py-4">No students found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

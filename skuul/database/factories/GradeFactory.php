@@ -17,17 +17,16 @@ class GradeFactory extends Factory
     public function definition(): array
     {
         $score = fake()->randomFloat(2, 0, 100);
-        $maxScore = 100;
 
         return [
-            'student_id' => Student::factory(),
-            'subject_id' => Subject::factory(),
-            'classroom_id' => Classroom::factory(),
-            'academic_year_id' => AcademicYear::factory(),
-            'term_id' => Term::factory(),
+            'student_id' => Student::inRandomOrder()->first() ?? Student::factory(),
+            'subject_id' => Subject::inRandomOrder()->first() ?? Subject::factory(),
+            'classroom_id' => Classroom::inRandomOrder()->first() ?? Classroom::factory(),
+            'academic_year_id' => AcademicYear::inRandomOrder()->first() ?? AcademicYear::factory(),
+            'term_id' => Term::inRandomOrder()->first() ?? Term::factory(),
             'assessment_type' => fake()->randomElement(['quiz', 'assignment', 'midterm', 'final', 'project']),
             'score' => $score,
-            'max_score' => $maxScore,
+            'max_score' => 100,
             'weight' => fake()->randomElement([1.00, 1.50, 2.00]),
             'date_recorded' => fake()->dateTimeBetween('-1 month', 'now')->format('Y-m-d'),
             'remarks' => fake()->optional()->sentence(),

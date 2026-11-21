@@ -9,6 +9,8 @@ class SubjectSeeder extends Seeder
 {
     public function run(): void
     {
-        Subject::factory()->count(24)->create();
+        if (Subject::query()->count() === 0) {
+            Subject::factory()->count(24)->create();
+        }
     }
 }

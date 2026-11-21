@@ -9,6 +9,8 @@ class AnnouncementSeeder extends Seeder
 {
     public function run(): void
     {
-        Announcement::factory()->count(10)->create();
+        if (Announcement::query()->count() === 0) {
+            Announcement::factory()->count(10)->create();
+        }
     }
 }

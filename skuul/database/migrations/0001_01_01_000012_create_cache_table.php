@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cache', function (Blueprint $table) {
-            $table->string('primary_key')->unique();
+            $table->string('key')->unique();
             $table->mediumtext('value');
             $table->integer('expiration');
         });

@@ -9,6 +9,8 @@ class TeacherSeeder extends Seeder
 {
     public function run(): void
     {
-        Teacher::factory()->count(10)->create();
+        if (Teacher::query()->count() === 0) {
+            Teacher::factory()->count(10)->create();
+        }
     }
 }

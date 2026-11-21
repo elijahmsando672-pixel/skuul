@@ -9,6 +9,8 @@ class ParentSeeder extends Seeder
 {
     public function run(): void
     {
-        ParentModel::factory()->count(15)->create();
+        if (ParentModel::query()->count() === 0) {
+            ParentModel::factory()->count(15)->create();
+        }
     }
 }

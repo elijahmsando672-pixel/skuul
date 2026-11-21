@@ -13,6 +13,11 @@ class ParentModel extends Model
 
     protected $table = 'parents';
 
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    {
+        return \Database\Factories\ParentFactory::new();
+    }
+
     protected $fillable = [
         'user_id',
         'parent_id_code',

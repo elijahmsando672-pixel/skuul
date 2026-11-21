@@ -41,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($announcements as $announcement)
+                    @forelse($announcements as $announcement)
                         <tr>
                             <td class="table-cell">{{ $announcement->title }}</td>
                             <td class="table-cell">{{ ucfirst($announcement->target_audience) }}</td>
@@ -56,7 +56,7 @@
                         <tr>
                             <td colspan="4" class="table-cell text-center text-gray-500 py-4">No announcements found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

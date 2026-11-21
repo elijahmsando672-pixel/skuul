@@ -19,7 +19,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($children as $child)
+                    @forelse($children as $child)
                         <tr>
                             <td class="table-cell font-medium">{{ $child->student_id }}</td>
                             <td class="table-cell">{{ $child->user->name }}</td>
@@ -34,7 +34,7 @@
                         <tr>
                             <td colspan="4" class="table-cell text-center text-gray-500 py-4">No children found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

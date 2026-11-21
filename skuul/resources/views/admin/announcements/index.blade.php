@@ -26,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                    @foreach($announcements as $announcement)
+                    @forelse($announcements as $announcement)
                         <tr>
                             <td class="table-cell font-medium">{{ $announcement->title }}</td>
                             <td class="table-cell">{{ Str::limit($announcement->content, 50) }}</td>
@@ -45,7 +45,7 @@
                         <tr>
                             <td colspan="6" class="table-cell text-center text-gray-500 py-4">No announcements found.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
                 </tbody>
             </table>
         </div>

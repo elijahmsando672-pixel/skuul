@@ -22,7 +22,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_type' => 'required|in:admin,teacher,student,parent',
+            'role_type' => 'required|in:student,parent',
             'phone' => 'nullable|string|max:20',
         ]);
 

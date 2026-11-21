@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
+use Illuminate\Support\Str;
+
+$mysqlSslCaConstant = class_exists(\Pdo\Mysql::class)
+    ? \Pdo\Mysql::ATTR_SSL_CA
+    : constant('PDO::MYSQL_ATTR_SSL_CA');
 
 return [
 
@@ -30,7 +35,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                $mysqlSslCaConstant => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 

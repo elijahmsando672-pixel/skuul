@@ -22,6 +22,6 @@ class DashboardController extends Controller
 
         $announcements = Announcement::where('is_published', true)->latest()->limit(5)->get();
 
-        return view('admin.dashboard', compact('stats', 'announcements'));
+        return view('dashboard', compact('stats', 'announcements'));
     }
 }
