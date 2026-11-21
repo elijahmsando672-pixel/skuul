@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\Admin\AcademicYearController;
 use App\Http\Controllers\Admin\AnnouncementController;
@@ -55,7 +55,7 @@ Route::get('/reset-password/{token}', [LoginController::class, 'showResetPasswor
 Route::post('/reset-password', [LoginController::class, 'resetPassword'])->name('password.update');
 
 // Dashboard (requires auth)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth','subscription'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/admin/impersonate/leave', [AdminImpersonationController::class, 'destroy'])->name('admin.impersonate.leave');
 

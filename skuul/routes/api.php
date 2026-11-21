@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\Api\AcademicController;
 use App\Http\Controllers\Api\AuthController;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [LoginController::class, 'apiLogin'])->middleware('throttle:6,1');
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','subscription'])->group(function () {
     Route::get('/user', fn (Request $request) => $request->user());
     Route::post('/logout', [LoginController::class, 'apiLogout']);
 
@@ -49,3 +49,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/{resource}/{id}', [CatalogController::class, 'update'])->whereIn('resource', $catalog);
     Route::delete('/{resource}/{id}', [CatalogController::class, 'destroy'])->whereIn('resource', $catalog);
 });
+
