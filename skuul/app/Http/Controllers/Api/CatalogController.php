@@ -16,6 +16,10 @@ use Illuminate\Validation\Rule;
 
 class CatalogController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     private const MAP = [
         'students' => Student::class,
         'teachers' => Teacher::class,
@@ -111,7 +115,7 @@ class CatalogController extends Controller
     {
         $this->ensureAdmin($request);
         $modelClass = $this->modelClass($resource);
-        $model = $modelClass::findOrFail($id);
+        $model = $modelClass::findOrFail($id); $this->authorizeTenant($model);
 
         if (self::RELATIONS[$resource] !== []) {
             $model->load(self::RELATIONS[$resource]);
@@ -144,7 +148,7 @@ class CatalogController extends Controller
     {
         $this->ensureAdmin($request);
         $modelClass = $this->modelClass($resource);
-        $model = $modelClass::findOrFail($id);
+        $model = $modelClass::findOrFail($id); $this->authorizeTenant($model);
         $validated = $request->validate($this->rules($resource, $model, false));
 
         $model->fill($validated)->save();
@@ -160,7 +164,7 @@ class CatalogController extends Controller
     {
         $this->ensureAdmin($request);
         $modelClass = $this->modelClass($resource);
-        $modelClass::findOrFail($id)->delete();
+        $model=$modelClass::findOrFail($id); $this->authorizeTenant($model); $model->delete();
 
         return response()->json(['message' => 'Resource deleted successfully.']);
     }
@@ -209,3 +213,4 @@ class CatalogController extends Controller
         return max(1, min(100, (int) $request->query('per_page', 15)));
     }
 }
+

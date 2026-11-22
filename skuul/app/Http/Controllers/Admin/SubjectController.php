@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $subjects = Subject::with('classroom', 'teacher')->paginate(15);
@@ -42,11 +44,13 @@ class SubjectController extends Controller
 
     public function show(Subject $subject)
     {
+        $this->authorizeTenant($subject);
         return view('admin.subjects.show', compact('subject'));
     }
 
     public function edit(Subject $subject)
     {
+        $this->authorizeTenant($subject);
         $classrooms = Classroom::with('academicYear')->get();
         $teachers = Teacher::with('user')->get();
         return view('admin.subjects.edit', compact('subject', 'classrooms', 'teachers'));
@@ -54,6 +58,7 @@ class SubjectController extends Controller
 
     public function update(Request $request, Subject $subject)
     {
+        $this->authorizeTenant($subject);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|unique:subjects,code,' . $subject->id,
@@ -71,6 +76,7 @@ class SubjectController extends Controller
 
     public function destroy(Subject $subject)
     {
+        $this->authorizeTenant($subject);
         $subject->delete();
         return redirect()->route('admin.subjects.index')->with('success', 'Subject deleted successfully.');
     }

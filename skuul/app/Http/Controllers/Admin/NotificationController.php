@@ -19,6 +19,8 @@ use Illuminate\Validation\Rule;
 
 class NotificationController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         return view('admin.notifications.index', [
@@ -45,7 +47,7 @@ class NotificationController extends Controller
             'book_issue_id' => 'required_if:type,library|nullable|exists:book_issues,id',
         ]);
 
-        $user = User::findOrFail($validated['user_id']);
+        $user = User::findOrFail($validated['user_id']); if($this->tenantId() && (int)$user->current_school_id !== (int)$this->tenantId()) abort(404);
         $notification = $this->buildNotification($validated);
 
         if (! $notification) {
@@ -61,13 +63,13 @@ class NotificationController extends Controller
     {
         return match ($validated['type']) {
             'enrollment' => new EnrollmentConfirmation(
-                Student::findOrFail($validated['student_id']),
-                Classroom::findOrFail($validated['classroom_id']),
-                AcademicYear::findOrFail($validated['academic_year_id']),
+                tap(Student::findOrFail($validated['student_id']), fn($x)=>$this->authorizeTenant($x)),
+                tap(Classroom::findOrFail($validated['classroom_id']), fn($x)=>$this->authorizeTenant($x)),
+                tap(AcademicYear::findOrFail($validated['academic_year_id']), fn($x)=>$this->authorizeTenant($x)),
             ),
-            'fee' => new FeePaymentReminder(FeeRecord::findOrFail($validated['fee_record_id'])),
-            'exam' => new ExamResultPublished(ExamResult::with('exam')->findOrFail($validated['exam_result_id'])->exam, ExamResult::findOrFail($validated['exam_result_id'])),
-            'library' => new LibraryBookDue(BookIssue::findOrFail($validated['book_issue_id'])),
+            'fee' => new FeePaymentReminder(tap(FeeRecord::findOrFail($validated['fee_record_id']), fn($x)=>$this->authorizeTenant($x))),
+            'exam' => (function() use ($validated) { $r=tap(ExamResult::with('exam')->findOrFail($validated['exam_result_id']), fn($x)=>$this->authorizeTenant($x)); return new ExamResultPublished($r->exam, $r); })(),
+            'library' => new LibraryBookDue(tap(BookIssue::findOrFail($validated['book_issue_id']), fn($x)=>$this->authorizeTenant($x))),
             default => null,
         };
     }

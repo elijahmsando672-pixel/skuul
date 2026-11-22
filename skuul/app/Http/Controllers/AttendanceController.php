@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function teacherIndex()
     {
         $teacher = auth()->user()->teacher;
@@ -76,7 +78,8 @@ class AttendanceController extends Controller
     {
         $request->validate(['classroom_id' => 'required|exists:classrooms,id']);
 
-        $classroom = Classroom::find($request->classroom_id);
+        $classroom = Classroom::findOrFail($request->classroom_id);
+        $this->authorizeTenant($classroom);
         $students = $classroom->enrollments()->where('status', 'active')->with('student.user')->get()->pluck('student');
 
         return response()->json($students);

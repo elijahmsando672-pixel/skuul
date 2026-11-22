@@ -13,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class FeeController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $feeStructures = FeeStructure::with('academicYear')
@@ -51,13 +53,13 @@ class FeeController extends Controller
 
     public function show(FeeStructure $fee)
     {
-        $schoolId = \App\Support\Tenancy\TenantContext::schoolId();
-        if ($schoolId && (int) $fee->school_id !== (int) $schoolId) abort(404);
+        $this->authorizeTenant($fee);
         return view('admin.fees.show', compact('fee'));
     }
 
     public function edit(FeeStructure $fee)
     {
+        $this->authorizeTenant($fee);
         $feeStructure = $fee;
         $academicYears = AcademicYear::orderByDesc('start_date')->get();
 
@@ -66,6 +68,7 @@ class FeeController extends Controller
 
     public function update(Request $request, FeeStructure $fee)
     {
+        $this->authorizeTenant($fee);
         $validated = $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
             'name' => 'required|string|max:255',
@@ -84,6 +87,7 @@ class FeeController extends Controller
 
     public function destroy(FeeStructure $fee)
     {
+        $this->authorizeTenant($fee);
         $fee->delete();
 
         return redirect()->route('admin.fees.index')->with('success', 'Fee structure deleted successfully.');
@@ -120,6 +124,9 @@ class FeeController extends Controller
             'status' => ['required', Rule::in(['pending', 'partial', 'paid', 'overdue'])],
         ]);
 
+        tap(\App\Models\Student::findOrFail($validated['student_id']), fn ($x) => $this->authorizeTenant($x));
+        tap(\App\Models\FeeStructure::findOrFail($validated['fee_structure_id']), fn ($x) => $this->authorizeTenant($x));
+
         $amount = (float) $validated['amount'];
         $amountPaid = (float) ($validated['amount_paid'] ?? 0);
         $status = $validated['status'];
@@ -142,9 +149,9 @@ class FeeController extends Controller
 
         return redirect()->route('admin.fees.records')->with('success', 'Fee record created successfully.');
     }
-
     public function recordStatus(Request $request, FeeRecord $feeRecord)
     {
+        $this->authorizeTenant($feeRecord);
         $validated = $request->validate([
             'amount_paid' => ['required', 'numeric', 'min:0', 'max:'.$feeRecord->amount],
             'status' => ['required', Rule::in(['pending', 'partial', 'paid', 'overdue'])],
@@ -178,3 +185,7 @@ class FeeController extends Controller
         return redirect()->route('admin.fees.records')->with('success', 'Fee payment updated successfully.');
     }
 }
+
+
+
+

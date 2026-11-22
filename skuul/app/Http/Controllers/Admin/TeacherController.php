@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $teachers = Teacher::with('user')->paginate(15);
@@ -39,17 +41,20 @@ class TeacherController extends Controller
 
     public function show(Teacher $teacher)
     {
+        $this->authorizeTenant($teacher);
         return view('admin.teachers.show', compact('teacher'));
     }
 
     public function edit(Teacher $teacher)
     {
+        $this->authorizeTenant($teacher);
         $users = User::where('role_type', 'teacher')->get();
         return view('admin.teachers.edit', compact('teacher', 'users'));
     }
 
     public function update(Request $request, Teacher $teacher)
     {
+        $this->authorizeTenant($teacher);
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'employee_id' => 'required|string|unique:teachers,employee_id,' . $teacher->id,
@@ -66,6 +71,7 @@ class TeacherController extends Controller
 
     public function destroy(Teacher $teacher)
     {
+        $this->authorizeTenant($teacher);
         $teacher->delete();
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher deleted successfully.');
     }

@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $teacher = auth()->user()->teacher;

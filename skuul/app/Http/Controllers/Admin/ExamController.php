@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $exams = Exam::with('academicYear', 'subject')->latest('exam_date')->paginate(15);
@@ -39,11 +41,13 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
+        $this->authorizeTenant($exam);
         return redirect()->route('admin.exams.results', $exam);
     }
 
     public function edit(Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $academicYears = AcademicYear::orderByDesc('start_date')->get();
         $subjects = Subject::with('classroom')->get();
 
@@ -52,6 +56,7 @@ class ExamController extends Controller
 
     public function update(Request $request, Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $validated = $this->validateExam($request);
 
         $exam->update($validated);
@@ -61,6 +66,7 @@ class ExamController extends Controller
 
     public function destroy(Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $exam->delete();
 
         return redirect()->route('admin.exams.index')->with('success', 'Exam deleted successfully.');
@@ -68,6 +74,7 @@ class ExamController extends Controller
 
     public function results(Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $exam->load('academicYear', 'subject.classroom');
 
         $students = Student::with('user')
@@ -88,6 +95,7 @@ class ExamController extends Controller
 
     public function resultsStore(Request $request, Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $validated = $request->validate([
             'results' => 'required|array',
             'results.*.student_id' => 'required|exists:students,id',
@@ -118,6 +126,7 @@ class ExamController extends Controller
 
     public function publish(Exam $exam)
     {
+        $this->authorizeTenant($exam);
         $exam->update(['is_published' => ! $exam->is_published]);
 
         if ($exam->is_published) {
@@ -177,3 +186,5 @@ class ExamController extends Controller
         return 'F';
     }
 }
+
+

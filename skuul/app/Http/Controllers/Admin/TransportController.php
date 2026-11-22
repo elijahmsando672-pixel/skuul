@@ -14,6 +14,8 @@ use Illuminate\Validation\Rule;
 
 class TransportController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $routes = TransportRoute::query()->orderBy('name')->paginate(15);
@@ -46,16 +48,19 @@ class TransportController extends Controller
 
     public function show(TransportRoute $route)
     {
+        $this->authorizeTenant($route);
         return redirect()->route('admin.transport.routes.edit', $route);
     }
 
     public function edit(TransportRoute $route)
     {
+        $this->authorizeTenant($route);
         return view('admin.transport.routes.edit', compact('route'));
     }
 
     public function update(Request $request, TransportRoute $route)
     {
+        $this->authorizeTenant($route);
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('transport_routes', 'name')->ignore($route->id)],
             'origin' => ['required', 'string', 'max:255'],
@@ -74,6 +79,7 @@ class TransportController extends Controller
 
     public function destroy(TransportRoute $route)
     {
+        $this->authorizeTenant($route);
         $route->delete();
 
         return redirect()->route('admin.transport.routes.index')->with('success', 'Transport route deleted successfully.');
@@ -118,6 +124,7 @@ class TransportController extends Controller
         ]);
 
         $validated['is_active'] = $request->boolean('is_active');
+        if (!empty($validated['route_id'])) tap(\App\Models\TransportRoute::findOrFail($validated['route_id']), fn($x)=>$this->authorizeTenant($x));
 
         $vehicle->update($validated);
 
@@ -202,3 +209,7 @@ class TransportController extends Controller
         return redirect()->route('admin.transport.assignments')->with('success', 'Transport assignment removed successfully.');
     }
 }
+
+
+
+

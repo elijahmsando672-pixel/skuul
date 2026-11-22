@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class ClassroomController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $classrooms = Classroom::with('academicYear', 'teacher')->paginate(15);
@@ -42,11 +44,13 @@ class ClassroomController extends Controller
 
     public function show(Classroom $classroom)
     {
+        $this->authorizeTenant($classroom);
         return view('admin.classrooms.show', compact('classroom'));
     }
 
     public function edit(Classroom $classroom)
     {
+        $this->authorizeTenant($classroom);
         $academicYears = AcademicYear::all();
         $teachers = Teacher::with('user')->get();
         return view('admin.classrooms.edit', compact('classroom', 'academicYears', 'teachers'));
@@ -54,6 +58,7 @@ class ClassroomController extends Controller
 
     public function update(Request $request, Classroom $classroom)
     {
+        $this->authorizeTenant($classroom);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'grade_level' => 'required|string',
@@ -71,6 +76,7 @@ class ClassroomController extends Controller
 
     public function destroy(Classroom $classroom)
     {
+        $this->authorizeTenant($classroom);
         $classroom->delete();
         return redirect()->route('admin.classrooms.index')->with('success', 'Classroom deleted successfully.');
     }

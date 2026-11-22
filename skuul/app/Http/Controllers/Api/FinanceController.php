@@ -13,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class FinanceController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     private const STATUSES = ['pending', 'partial', 'paid', 'overdue'];
 
     public function feeStructures(Request $request): JsonResponse
@@ -49,6 +51,8 @@ class FinanceController extends Controller
         $this->ensureAdmin($request);
 
         $validated = $this->validateFeeRecord($request);
+        tap(\App\Models\Student::findOrFail($validated['student_id']), fn($x)=>$this->authorizeTenant($x));
+        tap(\App\Models\FeeStructure::findOrFail($validated['fee_structure_id']), fn($x)=>$this->authorizeTenant($x));
 
         $amount = (float) $validated['amount'];
         $amountPaid = (float) ($validated['amount_paid'] ?? 0);
@@ -177,3 +181,4 @@ class FinanceController extends Controller
         return max(1, min(100, (int) $request->query('per_page', 15)));
     }
 }
+

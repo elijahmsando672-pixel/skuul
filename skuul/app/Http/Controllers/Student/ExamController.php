@@ -7,6 +7,8 @@ use App\Models\ExamResult;
 
 class ExamController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $student = auth()->user()->student;

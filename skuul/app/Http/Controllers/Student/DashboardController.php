@@ -9,6 +9,8 @@ use App\Models\Student;
 
 class DashboardController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $student = auth()->user()->student;

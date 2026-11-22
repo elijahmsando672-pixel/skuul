@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 
 class SchoolRegistrationController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function create()
     {
         $plans = Plan::where('is_active', true)->orderBy('monthly_price')->get();

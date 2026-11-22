@@ -13,6 +13,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class LoginController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function showLoginForm()
     {
         return view('auth.login');

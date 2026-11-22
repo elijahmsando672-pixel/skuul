@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class AcademicYearController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $years = AcademicYear::orderBy('start_date', 'desc')->get();
@@ -35,16 +37,19 @@ class AcademicYearController extends Controller
 
     public function show(AcademicYear $academicYear)
     {
+        $this->authorizeTenant($academicYear);
         return view('admin.academic-years.show', ['year' => $academicYear]);
     }
 
     public function edit(AcademicYear $academicYear)
     {
+        $this->authorizeTenant($academicYear);
         return view('admin.academic-years.edit', ['year' => $academicYear]);
     }
 
     public function update(Request $request, AcademicYear $academicYear)
     {
+        $this->authorizeTenant($academicYear);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
@@ -59,6 +64,7 @@ class AcademicYearController extends Controller
 
     public function destroy(AcademicYear $academicYear)
     {
+        $this->authorizeTenant($academicYear);
         $academicYear->delete();
         return redirect()->route('admin.academic-years.index')->with('success', 'Academic year deleted successfully.');
     }

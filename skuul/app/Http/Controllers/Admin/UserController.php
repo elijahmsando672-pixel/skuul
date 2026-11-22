@@ -10,9 +10,11 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
-        $users = User::with('roles')->paginate(15);
+        $users = User::with('roles')->where('current_school_id', $this->tenantId())->paginate(15);
         return view('admin.users.index', compact('users'));
     }
 
@@ -34,6 +36,7 @@ class UserController extends Controller
         ]);
 
         $user = User::create([
+            'current_school_id' => $this->tenantId(),
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
@@ -49,17 +52,20 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        $this->authorizeTenant($user);
         return view('admin.users.show', compact('user'));
     }
 
     public function edit(User $user)
     {
+        $this->authorizeTenant($user);
         $roles = Role::all();
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
+        $this->authorizeTenant($user);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
@@ -88,7 +94,14 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        $this->authorizeTenant($user);
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }
+
+
+
+
+
+

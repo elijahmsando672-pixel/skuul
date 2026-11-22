@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 class TransportController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function routes(Request $request): JsonResponse
     {
         $query = TransportRoute::with('vehicles');

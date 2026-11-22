@@ -15,6 +15,8 @@ use RuntimeException;
 
 class LibraryController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function books(Request $request): JsonResponse
     {
         $search = trim((string) $request->query('search', ''));
@@ -68,6 +70,9 @@ class LibraryController extends Controller
         $request->validate([
             'borrower_id' => [Rule::exists($table, 'id')],
         ]);
+        tap(\App\Models\Book::findOrFail($validated['book_id']), fn ($x) => $this->authorizeTenant($x));
+        $borrowerClass = $validated['borrower_type'] === 'student' ? \App\Models\Student::class : \App\Models\Teacher::class;
+        tap($borrowerClass::findOrFail($validated['borrower_id']), fn ($x) => $this->authorizeTenant($x));
 
         try {
             $issue = DB::transaction(function () use ($validated) {
@@ -96,7 +101,6 @@ class LibraryController extends Controller
 
         return response()->json($issue->load(['book', 'borrower']), 201);
     }
-
     public function returnIssue(BookIssue $bookIssue): JsonResponse
     {
         $this->ensureAdmin(request());
@@ -151,3 +155,5 @@ class LibraryController extends Controller
         return max(1, min(100, (int) $request->query('per_page', 15)));
     }
 }
+
+

@@ -7,6 +7,8 @@ use App\Models\TransportAssignment;
 
 class TransportController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $student = auth()->user()?->student;

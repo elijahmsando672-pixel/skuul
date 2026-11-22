@@ -8,6 +8,8 @@ use App\Models\Student;
 
 class FeeController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $parentId = auth()->user()?->parent?->id;

@@ -10,6 +10,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([

@@ -17,6 +17,8 @@ use Illuminate\Http\Request;
 
 class AcademicController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function timetables(Request $request): JsonResponse
     {
         $user = $request->user();

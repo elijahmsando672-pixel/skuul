@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Platform;
 
@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class PlanController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $plans = Plan::orderBy('monthly_price')->get();
@@ -41,6 +43,7 @@ class PlanController extends Controller
 
     public function update(Request $request, Plan $plan)
     {
+        $this->authorizeTenant($plan);
         $data = $request->validate([
             'name'=>'required|string|max:255',
             'description'=>'nullable|string',
@@ -60,3 +63,4 @@ class PlanController extends Controller
         return back()->with('success', 'Plan updated.');
     }
 }
+

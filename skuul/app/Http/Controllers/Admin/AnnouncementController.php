@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class AnnouncementController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $announcements = Announcement::with('user')->latest()->paginate(15);
@@ -40,16 +42,19 @@ class AnnouncementController extends Controller
 
     public function show(Announcement $announcement)
     {
+        $this->authorizeTenant($announcement);
         return view('admin.announcements.show', compact('announcement'));
     }
 
     public function edit(Announcement $announcement)
     {
+        $this->authorizeTenant($announcement);
         return view('admin.announcements.edit', compact('announcement'));
     }
 
     public function update(Request $request, Announcement $announcement)
     {
+        $this->authorizeTenant($announcement);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -67,6 +72,7 @@ class AnnouncementController extends Controller
 
     public function destroy(Announcement $announcement)
     {
+        $this->authorizeTenant($announcement);
         $announcement->delete();
         return redirect()->route('admin.announcements.index')->with('success', 'Announcement deleted successfully.');
     }

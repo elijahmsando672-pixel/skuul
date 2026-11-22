@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Platform;
 
@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 
 class SchoolController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $schools = School::withCount('users')->latest()->paginate(20);
@@ -19,6 +21,7 @@ class SchoolController extends Controller
 
     public function show(School $school)
     {
+        $this->authorizeTenant($school);
         $school->load(['users','subscriptions.plan','invoices','paymentTransactions']);
         return view('platform.schools.show', compact('school'));
     }
@@ -45,3 +48,4 @@ class SchoolController extends Controller
         return back()->with('success', 'School reactivated.');
     }
 }
+

@@ -13,6 +13,8 @@ use Illuminate\Validation\Rule;
 
 class TimetableController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     private const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     public function index()
@@ -54,6 +56,7 @@ class TimetableController extends Controller
 
     public function show(Timetable $timetable)
     {
+        $this->authorizeTenant($timetable);
         $timetable->load('academicYear', 'classroom', 'subject', 'teacher.user');
 
         return view('admin.timetables.show', compact('timetable'));
@@ -61,6 +64,7 @@ class TimetableController extends Controller
 
     public function edit(Timetable $timetable)
     {
+        $this->authorizeTenant($timetable);
         return view('admin.timetables.edit', [
             'timetable' => $timetable,
             'academicYears' => AcademicYear::orderByDesc('is_active')->get(),
@@ -73,6 +77,7 @@ class TimetableController extends Controller
 
     public function update(Request $request, Timetable $timetable)
     {
+        $this->authorizeTenant($timetable);
         $validated = $this->validateTimetable($request, $timetable->id);
         $error = $this->validateTimeRange($validated['start_time'], $validated['end_time']);
 
@@ -87,6 +92,7 @@ class TimetableController extends Controller
 
     public function destroy(Timetable $timetable)
     {
+        $this->authorizeTenant($timetable);
         $timetable->delete();
 
         return redirect()->route('admin.timetables.index')->with('success', 'Timetable entry deleted successfully.');
@@ -158,3 +164,5 @@ class TimetableController extends Controller
         return $end <= $start ? 'End time must be after start time.' : null;
     }
 }
+
+

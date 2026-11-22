@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class GradeController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $grades = Grade::with('student.user', 'subject')->latest()->paginate(15);
@@ -66,11 +68,13 @@ class GradeController extends Controller
 
     public function show(Grade $grade)
     {
+        $this->authorizeTenant($grade);
         return view('grades.show', compact('grade'));
     }
 
     public function edit(Grade $grade)
     {
+        $this->authorizeTenant($grade);
         $students = Student::with('user')->get();
         $subjects = Subject::with('classroom')->get();
         return view('grades.edit', compact('grade', 'students', 'subjects'));
@@ -78,6 +82,7 @@ class GradeController extends Controller
 
     public function update(Request $request, Grade $grade)
     {
+        $this->authorizeTenant($grade);
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'subject_id' => 'required|exists:subjects,id',
@@ -100,6 +105,7 @@ class GradeController extends Controller
 
     public function destroy(Grade $grade)
     {
+        $this->authorizeTenant($grade);
         $grade->delete();
         return back()->with('success', 'Grade deleted successfully.');
     }

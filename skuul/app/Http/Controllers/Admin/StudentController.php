@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $students = Student::with('user', 'parent', 'enrollments')->paginate(15);
@@ -46,6 +48,7 @@ class StudentController extends Controller
 
     public function show(Student $student)
     {
+        $this->authorizeTenant($student);
         $this->authorizeSchoolRecord($student);
         return view('admin.students.show', compact('student'));
     }
@@ -60,6 +63,7 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
+        $this->authorizeTenant($student);
         $users = User::where('role_type', 'student')->get();
         $parents = ParentModel::with('user')->get();
         return view('admin.students.edit', compact('student', 'users', 'parents'));
@@ -67,6 +71,7 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
+        $this->authorizeTenant($student);
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'student_id' => 'required|string|unique:students,student_id,' . $student->id,
@@ -84,6 +89,7 @@ class StudentController extends Controller
 
     public function destroy(Student $student)
     {
+        $this->authorizeTenant($student);
         $student->delete();
         return redirect()->route('admin.students.index')->with('success', 'Student deleted successfully.');
     }

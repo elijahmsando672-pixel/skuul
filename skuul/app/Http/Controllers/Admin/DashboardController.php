@@ -11,6 +11,8 @@ use App\Models\Teacher;
 
 class DashboardController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index()
     {
         $stats = [

@@ -15,6 +15,8 @@ use RuntimeException;
 
 class LibraryController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function index(Request $request)
     {
         $search = trim((string) $request->query('search', ''));
@@ -62,6 +64,7 @@ class LibraryController extends Controller
 
     public function show(Book $book)
     {
+        $this->authorizeTenant($book);
         $book->load('issues.borrower');
 
         return view('admin.library.index', [
@@ -72,11 +75,13 @@ class LibraryController extends Controller
 
     public function edit(Book $book)
     {
+        $this->authorizeTenant($book);
         return view('admin.library.edit', compact('book'));
     }
 
     public function update(Request $request, Book $book)
     {
+        $this->authorizeTenant($book);
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
@@ -104,6 +109,7 @@ class LibraryController extends Controller
 
     public function destroy(Book $book)
     {
+        $this->authorizeTenant($book);
         if ($book->activeIssues()->exists()) {
             return redirect()->route('admin.library.index')->with('error', 'This book cannot be deleted while copies are issued.');
         }
@@ -140,6 +146,11 @@ class LibraryController extends Controller
             'borrower_id' => ['required', 'integer', Rule::exists($table, 'id')],
         ])['borrower_id'];
 
+        tap(Book::findOrFail($validated['book_id']), fn($x)=>$this->authorizeTenant($x));
+        $borrower = $validated['borrower_type'] === 'student'
+            ? tap(Student::with('user')->findOrFail($validated['borrower_id']), fn($x)=>$this->authorizeTenant($x))
+            : tap(Teacher::with('user')->findOrFail($validated['borrower_id']), fn($x)=>$this->authorizeTenant($x));
+
         $issueId = null;
 
         try {
@@ -170,8 +181,8 @@ class LibraryController extends Controller
         }
 
         $borrower = $validated['borrower_type'] === 'student'
-            ? Student::with('user')->find($validated['borrower_id'])
-            : Teacher::with('user')->find($validated['borrower_id']);
+            ? tap(Student::with('user')->findOrFail($validated['borrower_id']), fn($x)=>$this->authorizeTenant($x))
+            : tap(Teacher::with('user')->findOrFail($validated['borrower_id']), fn($x)=>$this->authorizeTenant($x));
 
         $issue = BookIssue::with('book')->find($issueId);
 
@@ -184,6 +195,7 @@ class LibraryController extends Controller
 
     public function returnBook(BookIssue $bookIssue)
     {
+        $this->authorizeTenant($bookIssue);
         try {
             DB::transaction(function () use ($bookIssue) {
                 $issue = BookIssue::whereKey($bookIssue->id)->lockForUpdate()->firstOrFail();
@@ -208,3 +220,8 @@ class LibraryController extends Controller
         return redirect()->route('admin.library.issues')->with('success', 'Book returned successfully.');
     }
 }
+
+
+
+
+

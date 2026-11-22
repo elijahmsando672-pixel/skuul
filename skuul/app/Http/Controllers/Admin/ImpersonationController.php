@@ -9,11 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ImpersonationController extends Controller
 {
+    use \App\Http\Controllers\Concerns\AuthorizesTenant;
+
     public function store(Request $request, User $user)
     {
         $admin = $request->user();
 
         abort_unless($admin && $admin->hasRole('admin'), 403);
+        $this->authorizeTenant($user);
         abort_if($user->id === $admin->id, 403);
         abort_unless($user->is_active, 403);
         abort_unless(in_array($user->role_type, ['student', 'teacher', 'parent'], true), 403);
@@ -32,7 +35,7 @@ class ImpersonationController extends Controller
     public function destroy(Request $request)
     {
         $impersonatorId = $request->session()->get('impersonator_id');
-        $admin = $impersonatorId ? User::find($impersonatorId) : null;
+        $admin = $impersonatorId ? User::query()->where('current_school_id', $this->tenantId())->find($impersonatorId) : null;
 
         abort_unless($admin && $admin->hasRole('admin') && $admin->is_active, 403);
 
@@ -44,3 +47,6 @@ class ImpersonationController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Returned to your admin account.');
     }
 }
+
+
+
